@@ -69,8 +69,11 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> ChessSet;
         PieceMovesCalculator mover;
-        if(board.getPiece(myPosition).getPieceType() == PieceType.BISHOP){
+        ChessPiece myPiece = board.getPiece(myPosition);
+        if(myPiece.getPieceType() == PieceType.BISHOP){
             mover = new BishopMovesCalculator();
+        } else if (myPiece.getPieceType() == PieceType.KING) {
+            mover = new KingMovesCalculator();
         } else{
             mover = new PawnMovesCalculator();
         }
