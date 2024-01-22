@@ -74,7 +74,9 @@ public class ChessPiece {
             mover = new BishopMovesCalculator();
         } else if (myPiece.getPieceType() == PieceType.KING) {
             mover = new KingMovesCalculator();
-        } else{
+        } else if (myPiece.getPieceType() == PieceType.ROOK){
+            mover = new RookMovesCalculator();
+        }else{
             mover = new PawnMovesCalculator();
         }
 
