@@ -72,7 +72,7 @@ public class ChessPiece {
         if(board.getPiece(myPosition).getPieceType() == PieceType.BISHOP){
             mover = new BishopMovesCalculator();
         } else{
-            mover = null;
+            mover = new PawnMovesCalculator();
         }
 
         ChessSet = mover.pieceMoves(board, myPosition);
