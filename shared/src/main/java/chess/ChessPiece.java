@@ -1,6 +1,5 @@
 package chess;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -12,8 +11,8 @@ import java.util.Objects;
  */
 public class ChessPiece {
 
-    private ChessGame.TeamColor pieceColor;
-    private ChessPiece.PieceType type;
+    ChessGame.TeamColor pieceColor;
+    ChessPiece.PieceType type;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.pieceColor = pieceColor;
@@ -78,6 +77,8 @@ public class ChessPiece {
             mover = new RookMovesCalculator();
         } else if (myPiece.getPieceType() == PieceType.QUEEN) {
             mover = new QueenMovesCalculator();
+        } else if (myPiece.getPieceType() == PieceType.KNIGHT){
+            mover = new KnightMoveCalculator();
         } else{
             mover = new PawnMovesCalculator();
         }
