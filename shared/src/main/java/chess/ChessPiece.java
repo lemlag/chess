@@ -79,10 +79,13 @@ public class ChessPiece {
             mover = new QueenMovesCalculator();
         } else if (myPiece.getPieceType() == PieceType.KNIGHT){
             mover = new KnightMoveCalculator();
-        } else{
+        } else if (myPiece.getPieceType() == PieceType.PAWN){
             mover = new PawnMovesCalculator();
+        } else{
+            mover = null;
         }
 
+        assert mover != null;
         ChessSet = mover.pieceMoves(board, myPosition);
         return ChessSet;
     }
