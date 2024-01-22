@@ -35,7 +35,9 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
             row = position.getRow();
             col = position.getColumn();
 
-            while(row <= 8 && col >= 0){
+            row++;
+            col--;
+            while(row <= 8 && col >= 1){
                 if(board.getPiece(new ChessPosition(row, col)) == null){
                     this.ChessSet.add(new ChessMove(position, new ChessPosition(row, col), null));
                     row++;
@@ -50,7 +52,9 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
             row = position.getRow();
             col = position.getColumn();
 
-            while(row >= 0 && col <= 8) {
+            row--;
+            col++;
+            while(row >= 1 && col <= 8) {
                 if (board.getPiece(new ChessPosition(row, col)) == null) {
                     this.ChessSet.add(new ChessMove(position, new ChessPosition(row, col), null));
                     row--;
@@ -67,7 +71,9 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
             row = position.getRow();
             col = position.getColumn();
 
-            while(row >= 0 && col >= 8) {
+            row--;
+            col--;
+            while(row >= 1 && col >= 1) {
                 if (board.getPiece(new ChessPosition(row, col)) == null) {
                     this.ChessSet.add(new ChessMove(position, new ChessPosition(row, col), null));
                     row--;
