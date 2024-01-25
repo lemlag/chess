@@ -2,8 +2,6 @@ package chess;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 public class RookMovesCalculator implements PieceMovesCalculator {
 
@@ -16,66 +14,39 @@ public class RookMovesCalculator implements PieceMovesCalculator {
 
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position){
         ChessPiece rook = board.getPiece(position);
-        int row = position.getRow();
-        int col = position.getColumn();
-        row++;
-        while(row <= 8){
-            if(board.getPiece(new ChessPosition(row, col)) == null){
-                this.ChessSet.add(new ChessMove(position, new ChessPosition(row, col), null));
-                row++;
-            } else if (board.getPiece(new ChessPosition(row, col)).getTeamColor() == rook.getTeamColor()){
-                break;
-            } else{
-                this.ChessSet.add(new ChessMove(position, new ChessPosition(row, col), null));
-                break;
-            }
-        }
-        row = position.getRow();
-
-        row--;
-        while(row >= 1){
-            if(board.getPiece(new ChessPosition(row, col)) == null){
-                this.ChessSet.add(new ChessMove(position, new ChessPosition(row, col), null));
-                row--;
-            } else if (board.getPiece(new ChessPosition(row, col)).getTeamColor() == rook.getTeamColor()){
-                break;
-            } else{
-                this.ChessSet.add(new ChessMove(position, new ChessPosition(row, col), null));
-                break;
-            }
+        int rookRow = position.getRow();
+        int rookCol = position.getColumn();
+        int row;
+        int col;
+        for(row = rookRow + 1, col = rookCol; row < 9; row++){
+            if (addSet(board, position, rook, row, col)) break;
         }
 
-        row = position.getRow();
-
-        col++;
-        while(col <= 8) {
-            if (board.getPiece(new ChessPosition(row, col)) == null) {
-                this.ChessSet.add(new ChessMove(position, new ChessPosition(row, col), null));
-                col++;
-            } else if (board.getPiece(new ChessPosition(row, col)).getTeamColor() == rook.getTeamColor()) {
-                break;
-            } else {
-                this.ChessSet.add(new ChessMove(position, new ChessPosition(row, col), null));
-                break;
-            }
+        for(row = rookRow - 1; row > 0; row--){
+            if (addSet(board, position, rook, row, col)) break;
         }
 
-        col = position.getColumn();
+        for(row = rookRow, col = rookCol + 1; col < 9; col++){
+            if (addSet(board, position, rook, row, col)) break;
+        }
 
-        col--;
-        while(col >= 1) {
-            if (board.getPiece(new ChessPosition(row, col)) == null) {
-                this.ChessSet.add(new ChessMove(position, new ChessPosition(row, col), null));
-                col--;
-            } else if (board.getPiece(new ChessPosition(row, col)).getTeamColor() == rook.getTeamColor()) {
-                break;
-            } else {
-                this.ChessSet.add(new ChessMove(position, new ChessPosition(row, col), null));
-                break;
-            }
+        for(col = rookCol - 1; col > 0; col--){
+            if (addSet(board, position, rook, row, col)) break;
         }
 
         return this.ChessSet;
+    }
+
+    private boolean addSet(ChessBoard board, ChessPosition position, ChessPiece rook, int row, int col) {
+        if(board.getPiece(new ChessPosition(row, col)) == null){
+            this.ChessSet.add(new ChessMove(position, new ChessPosition(row, col), null));
+        } else if (board.getPiece(new ChessPosition(row, col)).getTeamColor() == rook.getTeamColor()){
+            return true;
+        } else{
+            this.ChessSet.add(new ChessMove(position, new ChessPosition(row, col), null));
+            return true;
+        }
+        return false;
     }
 }
 

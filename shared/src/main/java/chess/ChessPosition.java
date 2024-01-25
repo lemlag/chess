@@ -9,7 +9,7 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessPosition {
-    private int row, col;
+    int row, col;
 
 
     public ChessPosition(int row, int col) {

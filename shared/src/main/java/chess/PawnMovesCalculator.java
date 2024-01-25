@@ -27,43 +27,16 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
 
         if (col > 1) { // Test against left side piece
             enemyPos = new ChessPosition(row + rowModifier, col - 1);
-            ChessPiece diagonal = board.getPiece(enemyPos);
-            if (diagonal != null && diagonal.getTeamColor() != pawn.getTeamColor()) {
-                if(enemyPos.getRow() == 1 || enemyPos.getRow() == 8){
-                    this.ChessSet.add(new ChessMove(position, enemyPos, ChessPiece.PieceType.QUEEN));
-                    this.ChessSet.add(new ChessMove(position, enemyPos, ChessPiece.PieceType.ROOK));
-                    this.ChessSet.add(new ChessMove(position, enemyPos, ChessPiece.PieceType.KNIGHT));
-                    this.ChessSet.add(new ChessMove(position, enemyPos, ChessPiece.PieceType.BISHOP));
-                } else {
-                    this.ChessSet.add(new ChessMove(position, enemyPos, null));
-                }
-            }
+            checkDiagonal(board, position, pawn, enemyPos);
         }
         if (col < 8) { // Test against right side piece
             enemyPos = new ChessPosition(row + rowModifier, col + 1);
-            ChessPiece diagonal = board.getPiece(enemyPos);
-            if (diagonal != null && diagonal.getTeamColor() != pawn.getTeamColor()) {
-                if (enemyPos.getRow() == 1 || enemyPos.getRow() == 8) {
-                    this.ChessSet.add(new ChessMove(position, enemyPos, ChessPiece.PieceType.QUEEN));
-                    this.ChessSet.add(new ChessMove(position, enemyPos, ChessPiece.PieceType.ROOK));
-                    this.ChessSet.add(new ChessMove(position, enemyPos, ChessPiece.PieceType.KNIGHT));
-                    this.ChessSet.add(new ChessMove(position, enemyPos, ChessPiece.PieceType.BISHOP));
-                } else {
-                    this.ChessSet.add(new ChessMove(position, enemyPos, null));
-                }
-            }
+            checkDiagonal(board, position, pawn, enemyPos);
         }
 
         enemyPos = new ChessPosition(row + rowModifier, col);
         if (board.getPiece(enemyPos) == null) {
-            if (enemyPos.getRow() == 1 || enemyPos.getRow() == 8) {
-                this.ChessSet.add(new ChessMove(position, enemyPos, ChessPiece.PieceType.QUEEN));
-                this.ChessSet.add(new ChessMove(position, enemyPos, ChessPiece.PieceType.ROOK));
-                this.ChessSet.add(new ChessMove(position, enemyPos, ChessPiece.PieceType.KNIGHT));
-                this.ChessSet.add(new ChessMove(position, enemyPos, ChessPiece.PieceType.BISHOP));
-            } else {
-                this.ChessSet.add(new ChessMove(position, enemyPos, null));
-            }
+            promotion(position, enemyPos);
         }
 
         if(pawn.getTeamColor() == ChessGame.TeamColor.WHITE && row == 2){
@@ -77,5 +50,23 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
         }
 
         return this.ChessSet;
+    }
+
+    private void checkDiagonal(ChessBoard board, ChessPosition position, ChessPiece pawn, ChessPosition enemyPos) {
+        ChessPiece diagonal = board.getPiece(enemyPos);
+        if (diagonal != null && diagonal.getTeamColor() != pawn.getTeamColor()) {
+            promotion(position, enemyPos);
+        }
+    }
+
+    private void promotion(ChessPosition position, ChessPosition enemyPos) {
+        if(enemyPos.getRow() == 1 || enemyPos.getRow() == 8){
+            this.ChessSet.add(new ChessMove(position, enemyPos, ChessPiece.PieceType.QUEEN));
+            this.ChessSet.add(new ChessMove(position, enemyPos, ChessPiece.PieceType.ROOK));
+            this.ChessSet.add(new ChessMove(position, enemyPos, ChessPiece.PieceType.KNIGHT));
+            this.ChessSet.add(new ChessMove(position, enemyPos, ChessPiece.PieceType.BISHOP));
+        } else {
+            this.ChessSet.add(new ChessMove(position, enemyPos, null));
+        }
     }
 }

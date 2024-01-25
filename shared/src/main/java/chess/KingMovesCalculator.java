@@ -13,68 +13,26 @@ public class KingMovesCalculator implements PieceMovesCalculator {
 
     public  Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
         ChessPiece king = board.getPiece(position);
-        int row = position.getRow();
-        int col = position.getColumn();
+        int kRow = position.getRow();
+        int kCol = position.getColumn();
         ChessPiece enemy;
         ChessPosition enemyPos;
+        int enemyRow, enemyCol;
 
-        if(row > 1){
-            enemyPos = new ChessPosition(row-1, col);
-            enemy = board.getPiece(enemyPos);
-            if( enemy == null || enemy.getTeamColor() != king.getTeamColor()){
-                this.ChessSet.add(new ChessMove(position, enemyPos, null ));
-            }
-            if(col > 1){
-                enemyPos = new ChessPosition(row-1, col-1);
-                enemy = board.getPiece(enemyPos);
-                if( enemy == null || enemy.getTeamColor() != king.getTeamColor()){
-                    this.ChessSet.add(new ChessMove(position, enemyPos, null ));
+        for(int row = -1; row < 2; row++ ){
+            for(int col = -1; col < 2; col++){
+                enemyRow = kRow + row;
+                enemyCol = kCol + col;
+                if(enemyRow > 0 && enemyRow < 9 && enemyCol > 0 && enemyCol < 9){
+                    enemyPos = new ChessPosition(enemyRow, enemyCol);
+                    if(enemyPos == position){
+                        break;
+                    }
+                    enemy = board.getPiece(enemyPos);
+                    if( enemy == null || enemy.getTeamColor() != king.getTeamColor()){
+                        this.ChessSet.add(new ChessMove(position, enemyPos, null ));
+                    }
                 }
-            }
-            if(col < 8){
-                enemyPos = new ChessPosition(row-1, col+1);
-                enemy = board.getPiece(enemyPos);
-                if( enemy == null || enemy.getTeamColor() != king.getTeamColor()){
-                    this.ChessSet.add(new ChessMove(position, enemyPos, null ));
-                }
-            }
-        }
-
-        if(row<8){
-            enemyPos = new ChessPosition(row+1, col);
-            enemy = board.getPiece(enemyPos);
-            if( enemy == null || enemy.getTeamColor() != king.getTeamColor()){
-                this.ChessSet.add(new ChessMove(position, enemyPos, null ));
-            }
-            if(col > 1){
-                enemyPos = new ChessPosition(row+1, col-1);
-                enemy = board.getPiece(enemyPos);
-                if( enemy == null || enemy.getTeamColor() != king.getTeamColor()){
-                    this.ChessSet.add(new ChessMove(position, enemyPos, null ));
-                }
-            }
-            if(col < 8){
-                enemyPos = new ChessPosition(row+1, col+1);
-                enemy = board.getPiece(enemyPos);
-                if( enemy == null || enemy.getTeamColor() != king.getTeamColor()){
-                    this.ChessSet.add(new ChessMove(position, enemyPos, null ));
-                }
-            }
-        }
-
-        if(col > 1){
-            enemyPos = new ChessPosition(row, col-1);
-            enemy = board.getPiece(enemyPos);
-            if( enemy == null || enemy.getTeamColor() != king.getTeamColor()){
-                this.ChessSet.add(new ChessMove(position, enemyPos, null ));
-            }
-        }
-
-        if(col < 8){
-            enemyPos = new ChessPosition(row, col+1);
-            enemy = board.getPiece(enemyPos);
-            if( enemy == null || enemy.getTeamColor() != king.getTeamColor()){
-                this.ChessSet.add(new ChessMove(position, enemyPos, null ));
             }
         }
 

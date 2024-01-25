@@ -2,8 +2,6 @@ package chess;
 
 import java.util.Arrays;
 
-import static java.sql.DriverManager.println;
-
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -12,7 +10,7 @@ import static java.sql.DriverManager.println;
  */
 public class ChessBoard {
 
-    private ChessPiece [][]board;
+    ChessPiece [][]board;
     public ChessBoard() {
         this.board = new ChessPiece[8][8];
     }
