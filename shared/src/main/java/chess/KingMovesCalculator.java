@@ -26,7 +26,7 @@ public class KingMovesCalculator implements PieceMovesCalculator {
                 if(enemyRow > 0 && enemyRow < 9 && enemyCol > 0 && enemyCol < 9){
                     enemyPos = new ChessPosition(enemyRow, enemyCol);
                     if(enemyPos == position){
-                        break;
+                        continue;
                     }
                     enemy = board.getPiece(enemyPos);
                     if( enemy == null || enemy.getTeamColor() != king.getTeamColor()){

@@ -39,12 +39,16 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
         }
 
     private boolean addMoves(ChessBoard board, ChessPosition position, ChessPiece bishop, int row, int col) {
+        return addMovePiece(board, position, bishop, row, col, this.ChessSet);
+    }
+
+    static boolean addMovePiece(ChessBoard board, ChessPosition position, ChessPiece bishop, int row, int col, Collection<ChessMove> chessSet) {
         if (board.getPiece(new ChessPosition(row, col)) == null) {
-            this.ChessSet.add(new ChessMove(position, new ChessPosition(row, col), null));
+            chessSet.add(new ChessMove(position, new ChessPosition(row, col), null));
         } else if (board.getPiece(new ChessPosition(row, col)).getTeamColor() == bishop.getTeamColor()) {
             return true;
         } else {
-            this.ChessSet.add(new ChessMove(position, new ChessPosition(row, col), null));
+            chessSet.add(new ChessMove(position, new ChessPosition(row, col), null));
             return true;
         }
         return false;

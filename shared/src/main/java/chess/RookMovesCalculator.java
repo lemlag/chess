@@ -3,6 +3,8 @@ package chess;
 import java.util.Collection;
 import java.util.HashSet;
 
+import static chess.BishopMovesCalculator.addMovePiece;
+
 public class RookMovesCalculator implements PieceMovesCalculator {
 
 
@@ -38,15 +40,7 @@ public class RookMovesCalculator implements PieceMovesCalculator {
     }
 
     private boolean addSet(ChessBoard board, ChessPosition position, ChessPiece rook, int row, int col) {
-        if(board.getPiece(new ChessPosition(row, col)) == null){
-            this.ChessSet.add(new ChessMove(position, new ChessPosition(row, col), null));
-        } else if (board.getPiece(new ChessPosition(row, col)).getTeamColor() == rook.getTeamColor()){
-            return true;
-        } else{
-            this.ChessSet.add(new ChessMove(position, new ChessPosition(row, col), null));
-            return true;
-        }
-        return false;
+        return addMovePiece(board, position, rook, row, col, this.ChessSet);
     }
 }
 
