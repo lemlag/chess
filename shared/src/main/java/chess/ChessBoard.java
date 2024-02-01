@@ -88,6 +88,16 @@ public class ChessBoard {
         return Arrays.deepEquals(board, that.board);
     }
 
+//    @Override
+//    protected Object clone() throws CloneNotSupportedException {
+//        for (int i = 0; i < 8; i++) {
+//            for (int j = 0; j < 8; j++){
+//
+//            }
+//        }
+//        return super.clone();
+//    }
+
     @Override
     public int hashCode() {
         return Arrays.deepHashCode(board);
