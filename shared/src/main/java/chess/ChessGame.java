@@ -117,12 +117,18 @@ public class ChessGame {
                 currentPiece = this.board.getPiece(position);
                 if(king.equals(currentPiece)){
                     break;
+                } else if(position.getRow() == 8 && position.getColumn() == 8){
+                    return false;
                 }
             }
             if(king.equals(currentPiece)){
                 break;
             }
         }
+
+
+
+
         mover = new KnightMoveCalculator();
         potentialMoves = mover.pieceMoves(this.board,position);
 
