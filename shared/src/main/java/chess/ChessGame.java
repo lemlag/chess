@@ -2,7 +2,6 @@ package chess;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -126,8 +125,6 @@ public class ChessGame {
         ChessPiece currentPiece = this.board.getPiece(position);
         Collection<ChessMove> potentialMoves;
         PieceMovesCalculator mover;
-        ChessMove nextMove;
-        boolean inCheck = false;
 
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
