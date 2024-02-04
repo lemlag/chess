@@ -52,10 +52,11 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition){
         ChessPiece piece = this.board.getPiece(startPosition);
         ChessBoard copyBoard = null;
+        Collection<ChessMove> moves = new HashSet<>();
         if(piece == null || piece.getTeamColor() != this.getTeamTurn()){
-            return null;
+            return moves;
         }
-        Collection<ChessMove> moves = piece.pieceMoves(this.board, startPosition);
+        moves = piece.pieceMoves(this.board, startPosition);
         Collection<ChessMove> reMoves = new HashSet<>();
         for (ChessMove move : moves) {
             try {
