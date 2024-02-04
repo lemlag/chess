@@ -211,12 +211,16 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         Collection<ChessMove> tester;
+        ChessPiece piece;
         if(isInCheck(teamColor)){
             for (int i = 1; i <= 8; i++) {
                 for (int j = 1; j <= 8; j++) {
                     ChessPosition position = new ChessPosition(i, j);
+                    piece = this.board.getPiece(position);
                     tester = this.validMoves(position);
-                    if((!(tester == null)) && !tester.isEmpty()){
+                    if((!(tester == null)) &&
+                            !tester.isEmpty() &&
+                            (piece.getTeamColor() == teamColor)){
                         return false;
                     }
                 }
@@ -234,11 +238,17 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
+        Collection<ChessMove> tester;
+        ChessPiece piece;
         if(!isInCheck(teamColor)){
-            for (int i = 1; i < 8; i++) {
-                for (int j = 1; j < 8; j++) {
+            for (int i = 1; i <= 8; i++) {
+                for (int j = 1; j <= 8; j++) {
                     ChessPosition position = new ChessPosition(i, j);
-                    if(!(this.validMoves(position) == null)){
+                    piece = this.board.getPiece(position);
+                    tester = this.validMoves(position);
+                    if((!(tester == null)) &&
+                            !tester.isEmpty() &&
+                            (piece.getTeamColor() == teamColor)){
                         return false;
                     }
                 }
