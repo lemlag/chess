@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 
 /**
@@ -55,6 +56,7 @@ public class ChessGame {
             return null;
         }
         Collection<ChessMove> moves = piece.pieceMoves(this.board, startPosition);
+        Collection<ChessMove> reMoves = new HashSet<>();
         for (ChessMove move : moves) {
             try {
                 copyBoard = (ChessBoard) this.board.clone();
@@ -65,10 +67,14 @@ public class ChessGame {
                 this.board.addPiece(move.getEndPosition(), this.board.getPiece(move.getStartPosition()));
                 this.board.addPiece(move.getStartPosition(), null);
                 if (this.isInCheck(this.getTeamTurn())) {
-                    moves.remove(move);
+                    reMoves.add(move);
                 }
                 this.board = copyBoard;
             }
+        }
+
+        for(ChessMove reMove : reMoves){
+            moves.remove(reMove);
         }
 
         return moves;
@@ -81,6 +87,11 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        ChessPiece piece = board.getPiece(move.getStartPosition());
+        if(piece.getTeamColor() != this.teamTurn){
+            throw new InvalidMoveException();
+        }
+
         Collection<ChessMove> validPieceMoves = this.validMoves(move.getStartPosition());
         if(validPieceMoves.contains(move)){
             this.board.addPiece(move.getEndPosition(), this.board.getPiece(move.getStartPosition()));
