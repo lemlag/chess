@@ -94,8 +94,13 @@ public class ChessGame {
 
         Collection<ChessMove> validPieceMoves = this.validMoves(move.getStartPosition());
         if(validPieceMoves.contains(move)){
-            this.board.addPiece(move.getEndPosition(), this.board.getPiece(move.getStartPosition()));
-            this.board.addPiece(move.getStartPosition(), null);
+            if(move.getPromotionPiece() == null) {
+                this.board.addPiece(move.getEndPosition(), this.board.getPiece(move.getStartPosition()));
+                this.board.addPiece(move.getStartPosition(), null);
+            } else{
+                this.board.addPiece(move.getEndPosition(), new ChessPiece(this.teamTurn, move.getPromotionPiece()));
+                this.board.addPiece(move.getStartPosition(), null);
+            }
             if(this.teamTurn == TeamColor.WHITE){
                 this.teamTurn = TeamColor.BLACK;
             } else{
