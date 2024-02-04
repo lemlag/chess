@@ -88,7 +88,7 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         Collection<ChessMove> validPieceMoves = this.validMoves(move.getStartPosition());
-        if(validPieceMoves.contains(move)){
+        if((validPieceMoves != null) && validPieceMoves.contains(move)){
             if(move.getPromotionPiece() == null) {
                 this.board.addPiece(move.getEndPosition(), this.board.getPiece(move.getStartPosition()));
                 this.board.addPiece(move.getStartPosition(), null);
