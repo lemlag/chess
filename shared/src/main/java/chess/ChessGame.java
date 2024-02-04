@@ -16,6 +16,8 @@ public class ChessGame {
     ChessBoard board;
 
     public ChessGame() {
+        this.teamTurn = TeamColor.WHITE;
+        this.board = new ChessBoard();
     }
 
     /**
@@ -53,7 +55,7 @@ public class ChessGame {
         ChessPiece piece = this.board.getPiece(startPosition);
         ChessBoard copyBoard = null;
         Collection<ChessMove> moves = new HashSet<>();
-        if(piece == null || piece.getTeamColor() != this.getTeamTurn()){
+        if(piece == null){
             return moves;
         }
         moves = piece.pieceMoves(this.board, startPosition);
@@ -88,7 +90,11 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        Collection<ChessMove> validPieceMoves = this.validMoves(move.getStartPosition());
+        Collection<ChessMove> validPieceMoves = null;
+        ChessPiece piece = this.board.getPiece(move.getStartPosition());
+        if(piece.getTeamColor() == this.getTeamTurn()){
+            validPieceMoves = this.validMoves(move.getStartPosition());
+        }
         if((validPieceMoves != null) && validPieceMoves.contains(move)){
             if(move.getPromotionPiece() == null) {
                 this.board.addPiece(move.getEndPosition(), this.board.getPiece(move.getStartPosition()));
