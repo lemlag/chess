@@ -3,11 +3,11 @@ package model;
 import chess.ChessGame;
 
 public class GameData {
-    String whiteUsername;
-    String blackUsername;
-    String gameName;
-    int gameID;
-    ChessGame game;
+    private final String whiteUsername;
+    private final String blackUsername;
+    private final String gameName;
+    private final int gameID;
+    private final ChessGame game;
 
     public GameData(String whiteUsername, String blackUsername, String gameName, int gameID, ChessGame game) {
         this.whiteUsername = whiteUsername;
