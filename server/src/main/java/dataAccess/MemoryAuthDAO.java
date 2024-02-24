@@ -19,10 +19,13 @@ public class MemoryAuthDAO implements AuthDAO{
     public void deleteAuth(String authToken){
         checkAuth(authToken);
         authMap.remove(authToken);
+
     }
 // Make it throw a DataAccessException
-    public boolean checkAuth(String authToken){
-        return authMap.containsKey(authToken);
+    public void checkAuth(String authToken){
+        if(!authMap.containsKey(authToken)){
+            throw DataAccessException();
+        }
     }
 
     public void clearAuth(){
