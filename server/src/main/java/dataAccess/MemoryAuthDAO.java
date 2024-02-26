@@ -1,18 +1,24 @@
 package dataAccess;
 
+import model.AuthData;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class MemoryAuthDAO implements AuthDAO{
 
-    private Map<String, String> authMap = new HashMap<>();
+    private final Map<String, AuthData> authMap;
     private static MemoryAuthDAO instance;
 
+    public MemoryAuthDAO(){
+        authMap = new HashMap<>();
+    }
 
     public String createAuth(String username){
         String authToken = UUID.randomUUID().toString();
-        authMap.put(authToken, username);
+        AuthData authSet = new AuthData(username, authToken);
+        authMap.put(authToken, authSet);
         return authToken;
     }
 
@@ -21,11 +27,9 @@ public class MemoryAuthDAO implements AuthDAO{
         authMap.remove(authToken);
 
     }
-// Make it throw a DataAccessException
-    public void checkAuth(String authToken){
-        if(!authMap.containsKey(authToken)){
-            throw DataAccessException();
-        }
+
+    public boolean checkAuth(String authToken){
+        return MemoryAuthDAO.getInstance().authMap.containsKey(authToken);
     }
 
     public void clearAuth(){

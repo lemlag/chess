@@ -1,5 +1,6 @@
 package server;
 
+import service.UserService;
 import spark.*;
 
 public class Server {
@@ -20,12 +21,12 @@ public class Server {
 
     private void authRequest(Request req, Response res){
         String authToken = req.headers("authorization");
-        if(!AuthService.containsAuth(authToken)){
+        if(!GameService.containsAuth(authToken)){
             Spark.halt(401, "Error: unauthorized");
         }
     }
     private Object regRequest(Request req, Response res){
-        ClearService.getInstance.clear();
+        UserService.clearDB();
 
     }
 
