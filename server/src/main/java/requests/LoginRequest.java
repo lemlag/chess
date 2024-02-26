@@ -1,6 +1,6 @@
 package requests;
 
 public class LoginRequest {
-    String username;
-    String password;
+    public String username;
+    public String password;
 }

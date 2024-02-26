@@ -1,6 +1,6 @@
 package responses;
 
-public class Response {
+public class ResponseType {
     boolean success;
     String message;
 }

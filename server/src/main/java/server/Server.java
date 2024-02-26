@@ -2,8 +2,11 @@ package server;
 
 import com.google.gson.Gson;
 import requests.LoginRequest;
+import requests.RegisterRequest;
 import service.UserService;
+
 import spark.*;
+import responses.*;
 
 public class Server {
 
@@ -28,19 +31,25 @@ public class Server {
         }
     }
 
+    private Object logRequest(Request req, Response res){
+        Gson gson = new Gson();
+        LoginRequest request = gson.fromJson(req.body(), LoginRequest.class);
+        LoginResponse response = UserService.logIn(request);
+        return gson.toJson(response);
+    }
+
     private Object regRequest(Request req, Response res){
         Gson gson = new Gson();
-        LoginRequest request = (LoginRequest) gson.fromJson(String.valueOf(req), LoginRequest.class);
+        RegisterRequest request = gson.fromJson(req.body(), RegisterRequest.class);
+        LoginResponse response = UserService.register(request);
+        res.body(gson.toJson(response));
 
-        LoginService service = new LoginService();
-        LoginResult result = service.login(request);
-
-        return gson.toJson(result);
-
+        return gson.toJson(response);
     }
 
     private Object clearRequest(Request req, Response res){
         UserService.clearDB();
+        return null;
     }
 
     public void stop() {
