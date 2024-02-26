@@ -1,16 +1,17 @@
 package dataAccess;
 
 import chess.ChessGame;
+import model.GameData;
 
 public interface GameDAO {
 
-    ChessGame[] listGames();
+    GameData[] listGames();
 
-    String createGame(String gameName);
+    int createGame(String gameName);
 
-    ChessGame getGame(String gameID);
+    ChessGame getGameFromData(String gameID);
 
-    void updateGame(String gameID, String ClientColor);
+    void updateGame(String gameID, String clientColor);
 
     void clearGames();
 }

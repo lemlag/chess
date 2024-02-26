@@ -210,21 +210,27 @@ public class ChessGame {
         Collection<ChessMove> tester;
         ChessPiece piece;
         if(isInCheck(teamColor)){
-            for (int i = 1; i <= 8; i++) {
-                for (int j = 1; j <= 8; j++) {
-                    ChessPosition position = new ChessPosition(i, j);
-                    piece = this.board.getPiece(position);
-                    tester = this.validMoves(position);
-                    if((!(tester == null)) &&
-                            !tester.isEmpty() &&
-                            (piece.getTeamColor() == teamColor)){
-                        return false;
-                    }
-                }
-            }
-            return true;
+            return testMoves(teamColor);
         }
         return false;
+    }
+
+    private boolean testMoves(TeamColor teamColor) {
+        ChessPiece piece;
+        Collection<ChessMove> tester;
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
+                ChessPosition position = new ChessPosition(i, j);
+                piece = this.board.getPiece(position);
+                tester = this.validMoves(position);
+                if((!(tester == null)) &&
+                        !tester.isEmpty() &&
+                        (piece.getTeamColor() == teamColor)){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -238,19 +244,7 @@ public class ChessGame {
         Collection<ChessMove> tester;
         ChessPiece piece;
         if(!isInCheck(teamColor)){
-            for (int i = 1; i <= 8; i++) {
-                for (int j = 1; j <= 8; j++) {
-                    ChessPosition position = new ChessPosition(i, j);
-                    piece = this.board.getPiece(position);
-                    tester = this.validMoves(position);
-                    if((!(tester == null)) &&
-                            !tester.isEmpty() &&
-                            (piece.getTeamColor() == teamColor)){
-                        return false;
-                    }
-                }
-            }
-            return true;
+            return testMoves(teamColor);
         }
         return false;
     }

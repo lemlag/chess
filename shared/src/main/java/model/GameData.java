@@ -3,8 +3,8 @@ package model;
 import chess.ChessGame;
 
 public class GameData {
-    private final String whiteUsername;
-    private final String blackUsername;
+    private String whiteUsername;
+    private String blackUsername;
     private final String gameName;
     private final int gameID;
     private final ChessGame game;
@@ -36,4 +36,8 @@ public class GameData {
     public ChessGame getGame() {
         return game;
     }
+
+    public void setWhiteUsername(String username){whiteUsername = username;}
+
+    public void setBlackUsername(String username){blackUsername = username;}
 }
