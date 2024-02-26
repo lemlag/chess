@@ -12,4 +12,9 @@ public class UserService {
         UserDAO userData = MemoryUserDAO.getInstance();
         userData.clearUsers();
     }
+
+    public static boolean containsAuth(String authToken){
+        AuthDAO authenticator = MemoryAuthDAO.getInstance();
+        return authenticator.checkAuth(authToken);
+    }
 }
