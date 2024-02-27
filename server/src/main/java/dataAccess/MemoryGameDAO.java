@@ -14,7 +14,7 @@ public class MemoryGameDAO implements GameDAO{
 
     public MemoryGameDAO(){
         gameMap = new HashMap<>();
-        gameIDCounter = 0;
+        gameIDCounter = 1;
     }
     public GameData[] listGames(){
         return gameMap.values().toArray(new GameData[0]);
@@ -24,7 +24,7 @@ public class MemoryGameDAO implements GameDAO{
         int gameID = gameIDCounter;
         gameIDCounter++;
         ChessGame chess = new ChessGame();
-        GameData gameModel = new GameData("", "", gameName, gameID, chess);
+        GameData gameModel = new GameData(null, null, gameName, gameID, chess);
         gameMap.put(String.valueOf(gameID), gameModel);
         return String.valueOf(gameID);
     }

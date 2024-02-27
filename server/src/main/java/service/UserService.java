@@ -35,7 +35,7 @@ public class UserService {
         UserDAO userInfo = MemoryUserDAO.getInstance();
         LoginResponse response;
         UserData user = userInfo.getUser(request.username());
-        if(user.password().equals(request.password())){
+        if(user != null && user.password().equals(request.password())){
             response = createAuthService(request.username());
         } else{
             throw new UnauthorizedException();
@@ -53,11 +53,11 @@ public class UserService {
         UserDAO userInfo = MemoryUserDAO.getInstance();
         LoginResponse response;
         UserData user = userInfo.getUser(request.username());
-        if(user == null){
+        if(request.username() == null || request.password() == null || request.email() == null) {
+            throw new BadRequestException();
+        } else if(user == null){
             userInfo.createUser(request.username(), request.password(), request.email());
             response = createAuthService(request.username());
-        } else if(user.username().isEmpty() || user.password().isEmpty() || user.email().isEmpty()){
-            throw new BadRequestException();
         } else{
             throw new UsernameTakenException();
         }

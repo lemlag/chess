@@ -26,12 +26,17 @@ public class GameService {
 
     public static void joinGame(JoinGameRequest request, String username) throws UsernameTakenException, BadRequestException {
         GameDAO gameInfo = MemoryGameDAO.getInstance();
+        if(request.gameID() == null){
+            throw new BadRequestException();
+        }
         GameData gameDetails = gameInfo.getGameData(request.gameID());
-        if((request.playerColor().equals("WHITE")  && gameDetails.whiteUsername().isEmpty())
-                || (request.playerColor().equals("BLACK") && gameDetails.blackUsername().isEmpty())){
-            gameInfo.updateGame(request.gameID(), request.playerColor(), username);
-        } else if(request.playerColor().isEmpty()){
+        if(gameDetails == null){
+            throw new BadRequestException();
+        } else if(request.playerColor() == null){
             return;
+        } else if((request.playerColor().equals("WHITE")  && gameDetails.whiteUsername() == null)
+                || (request.playerColor().equals("BLACK") && gameDetails.blackUsername() == null)){
+            gameInfo.updateGame(request.gameID(), request.playerColor(), username);
         } else if((request.playerColor().equals("WHITE") || request.playerColor().equals("BLACK"))){
             throw new UsernameTakenException();
         } else{

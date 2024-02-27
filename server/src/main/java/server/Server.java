@@ -46,6 +46,7 @@ public class Server {
             authRequest(req);
             UserService.logOut(req.headers("authorization"));
             response = new ErrorResponse(null);
+            res.status(200);
         } catch(UnauthorizedException unEx){
             response = new ErrorResponse("Error: unauthorized");
             res.status(401);
@@ -61,6 +62,7 @@ public class Server {
         try {
             LoginRequest request = gson.fromJson(req.body(), LoginRequest.class);
             response = UserService.logIn(request);
+            res.status(200);
         } catch(UnauthorizedException unEx){
             response = new LoginResponse(null, null, "Error: unauthorized");
             res.status(401);
@@ -76,6 +78,7 @@ public class Server {
         LoginResponse response;
         try {
             response = UserService.register(request);
+            res.status(200);
         }
         catch(UsernameTakenException userEx){
             response = new LoginResponse(null, null,"Error: already taken");
@@ -97,6 +100,7 @@ public class Server {
         try {
             authRequest(req);
             response = GameService.listGames();
+            res.status(200);
         } catch(UnauthorizedException unEx){
             response = new ListGamesResponse(null, "Error: unauthorized");
             res.status(401);
@@ -113,6 +117,7 @@ public class Server {
         try {
             authRequest(req);
             response = GameService.createGame(request.gameName());
+            res.status(200);
         } catch(UnauthorizedException unEx){
             response = new CreateGameResponse(null, "Error: unauthorized");
             res.status(401);
@@ -134,6 +139,7 @@ public class Server {
         String username = UserService.getUser(req.headers("authorization"));
         GameService.joinGame(request, username);
         response = new ErrorResponse(null);
+        res.status(200);
         } catch(UnauthorizedException unEx){
             response = new ErrorResponse("Error: unauthorized");
             res.status(401);
@@ -155,6 +161,7 @@ public class Server {
         try {
             UserService.clearDB();
             response = new ErrorResponse(null);
+            res.status(200);
         } catch(Exception e){
             response = new ErrorResponse(e.getMessage());
             res.status(500);
