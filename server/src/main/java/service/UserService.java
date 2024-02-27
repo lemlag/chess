@@ -49,12 +49,15 @@ public class UserService {
         authInfo.deleteAuth(authToken);
     }
 
-    public static LoginResponse register (RegisterRequest request) throws UsernameTakenException{
+    public static LoginResponse register (RegisterRequest request) throws UsernameTakenException, BadRequestException {
         UserDAO userInfo = MemoryUserDAO.getInstance();
         LoginResponse response;
-        if(userInfo.getUser(request.username()) == null){
+        UserData user = userInfo.getUser(request.username());
+        if(user == null){
             userInfo.createUser(request.username(), request.password(), request.email());
             response = createAuthService(request.username());
+        } else if(user.username().isEmpty() || user.password().isEmpty() || user.email().isEmpty()){
+            throw new BadRequestException();
         } else{
             throw new UsernameTakenException();
         }

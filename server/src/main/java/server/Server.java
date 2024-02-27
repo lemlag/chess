@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import dataAccess.BadRequestException;
 import dataAccess.UnauthorizedException;
 import dataAccess.UsernameTakenException;
 import requests.*;
@@ -48,6 +49,9 @@ public class Server {
         } catch(UnauthorizedException unEx){
             response = new ErrorResponse("Error: unauthorized");
             res.status(401);
+        }  catch(Exception e){
+            response = new ErrorResponse(e.getMessage());
+            res.status(500);
         }
         return gson.toJson(response);
     }
@@ -60,6 +64,9 @@ public class Server {
         } catch(UnauthorizedException unEx){
             response = new LoginResponse(null, null, "Error: unauthorized");
             res.status(401);
+        } catch(Exception e){
+            response = new LoginResponse(null, null, e.getMessage());
+            res.status(500);
         }
         return gson.toJson(response);
     }
@@ -73,7 +80,15 @@ public class Server {
         catch(UsernameTakenException userEx){
             response = new LoginResponse(null, null,"Error: already taken");
             res.status(403);
+        } catch(BadRequestException badEx){
+            response = new LoginResponse(null, null, "Error: bad request");
+            res.status(400);
         }
+        catch(Exception e){
+            response = new LoginResponse(null, null, e.getMessage());
+            res.status(500);
+        }
+
         return gson.toJson(response);
     }
 
@@ -85,6 +100,9 @@ public class Server {
         } catch(UnauthorizedException unEx){
             response = new ListGamesResponse(null, "Error: unauthorized");
             res.status(401);
+        }  catch(Exception e){
+            response = new ListGamesResponse(null, e.getMessage());
+            res.status(500);
         }
         return gson.toJson(response);
     }
@@ -98,7 +116,13 @@ public class Server {
         } catch(UnauthorizedException unEx){
             response = new CreateGameResponse(null, "Error: unauthorized");
             res.status(401);
-        }
+        } catch (BadRequestException e) {
+        response = new CreateGameResponse(null, "Error: bad request");
+        res.status(400);
+    } catch(Exception e){
+        response = new CreateGameResponse(null, e.getMessage());
+        res.status(500);
+    }
         return gson.toJson(response);
     }
 
@@ -113,6 +137,15 @@ public class Server {
         } catch(UnauthorizedException unEx){
             response = new ErrorResponse("Error: unauthorized");
             res.status(401);
+        } catch (BadRequestException e) {
+            response = new ErrorResponse("Error: bad request");
+            res.status(400);
+        } catch (UsernameTakenException e) {
+            response = new ErrorResponse("Error: already taken");
+            res.status(403);
+        } catch(Exception e){
+            response = new ErrorResponse(e.getMessage());
+            res.status(500);
         }
         return gson.toJson(response);
     }

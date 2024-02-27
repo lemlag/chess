@@ -17,13 +17,13 @@ public class MemoryAuthDAO implements AuthDAO{
 
     public String createAuth(String username){
         String authToken = UUID.randomUUID().toString();
-        AuthData authSet = new AuthData(username, authToken);
+        AuthData authSet = new AuthData(authToken, username);
         authMap.put(authToken, authSet);
         return authToken;
     }
 
     public String getUser(String authToken){
-        return authMap.get(authToken).username();
+        return (authMap.get(authToken)).username();
     }
 
     public void deleteAuth(String authToken){
