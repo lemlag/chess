@@ -79,6 +79,8 @@ public class Server {
         try {
             response = UserService.register(request);
             res.status(200);
+            response.getUsername();
+            response.getAuthToken();
         }
         catch(UsernameTakenException userEx){
             response = new LoginResponse(null, null,"Error: already taken");
@@ -101,6 +103,7 @@ public class Server {
             authRequest(req);
             response = GameService.listGames();
             res.status(200);
+            response.getGames();
         } catch(UnauthorizedException unEx){
             response = new ListGamesResponse(null, "Error: unauthorized");
             res.status(401);
@@ -118,6 +121,7 @@ public class Server {
             authRequest(req);
             response = GameService.createGame(request.gameName());
             res.status(200);
+            response.getGameID();
         } catch(UnauthorizedException unEx){
             response = new CreateGameResponse(null, "Error: unauthorized");
             res.status(401);
