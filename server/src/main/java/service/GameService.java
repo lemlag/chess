@@ -17,7 +17,7 @@ public class GameService {
     }
 
     public static CreateGameResponse createGame(String gameName) throws BadRequestException {
-        if(gameName.isEmpty()){
+        if(gameName == null || gameName.isEmpty()){
             throw new BadRequestException();
         }
         GameDAO gameInfo = MemoryGameDAO.getInstance();

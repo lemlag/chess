@@ -22,10 +22,10 @@ public class UserService {
     }
 
     public static String getUser(String authToken){
-        return MemoryAuthDAO.getInstance().getUser(authToken);
+        return MemoryAuthDAO.getInstance().authDAOGetUsername(authToken);
     }
 
-    public static LoginResponse createAuthService(String username){
+    private static LoginResponse createAuthService(String username){
         AuthDAO authInfo = MemoryAuthDAO.getInstance();
         String authToken = authInfo.createAuth(username);
         return new LoginResponse(username, authToken, null);

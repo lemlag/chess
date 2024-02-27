@@ -9,4 +9,8 @@ public class ListGamesResponse extends ErrorResponse {
         super(message);
         this.games = games;
     }
+
+    public GameData[] getGames() {
+        return games;
+    }
 }

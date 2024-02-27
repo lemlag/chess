@@ -44,6 +44,7 @@ public class MemoryGameDAO implements GameDAO{
 
     public void clearGames(){
         gameMap.clear();
+        gameIDCounter = 1;
     }
 
     public static MemoryGameDAO getInstance() {

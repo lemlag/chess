@@ -7,4 +7,8 @@ public class CreateGameResponse extends ErrorResponse {
         super(message);
         this.gameID = gameID;
     }
+
+    public String getGameID() {
+        return gameID;
+    }
 }

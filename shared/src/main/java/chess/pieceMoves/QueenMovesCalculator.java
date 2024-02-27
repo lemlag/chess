@@ -17,13 +17,13 @@ public class QueenMovesCalculator implements PieceMovesCalculator {
     }
 
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position){
-        Collection<ChessMove> RookSet;
+        Collection<ChessMove> rookSet;
         PieceMovesCalculator mover;
         mover = new BishopMovesCalculator();
         this.chessSet = mover.pieceMoves(board, position);
         mover = new RookMovesCalculator();
-        RookSet = mover.pieceMoves(board, position);
-        this.chessSet.addAll(RookSet);
+        rookSet = mover.pieceMoves(board, position);
+        this.chessSet.addAll(rookSet);
 
         return this.chessSet;
     }

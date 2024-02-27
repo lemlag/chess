@@ -22,8 +22,13 @@ public class MemoryAuthDAO implements AuthDAO{
         return authToken;
     }
 
-    public String getUser(String authToken){
-        return (authMap.get(authToken)).username();
+    public String authDAOGetUsername(String authToken){
+        AuthData authModel = authMap.get(authToken);
+        if(authModel != null) {
+            return authModel.username();
+        } else{
+            return null;
+        }
     }
 
     public void deleteAuth(String authToken){

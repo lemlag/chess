@@ -4,7 +4,7 @@ public interface AuthDAO {
 
     String createAuth(String username);
 
-    String getUser(String authToken);
+    String authDAOGetUsername(String authToken);
 
     void deleteAuth(String authToken);
 

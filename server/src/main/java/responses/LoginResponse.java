@@ -9,4 +9,11 @@ public class LoginResponse extends ErrorResponse{
         this.username = username;
         this.authToken = authToken;
     }
+
+    public String getAuthToken(){
+        return authToken;
+    }
+
+    public String getUsername() {return username;
+    }
 }
