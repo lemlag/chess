@@ -151,8 +151,15 @@ public class Server {
     }
 
     private Object clearRequest(Request req, Response res){
-        UserService.clearDB();
-        return gson.toJson("");
+        ErrorResponse response;
+        try {
+            UserService.clearDB();
+            response = new ErrorResponse(null);
+        } catch(Exception e){
+            response = new ErrorResponse(e.getMessage());
+            res.status(500);
+        }
+        return gson.toJson(response);
     }
 
     public void stop() {
