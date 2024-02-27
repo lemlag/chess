@@ -7,11 +7,11 @@ public interface GameDAO {
 
     GameData[] listGames();
 
-    int createGame(String gameName);
+    String createGame(String gameName);
 
-    ChessGame getGameFromData(String gameID);
+    GameData getGameData(String gameID);
 
-    void updateGame(String gameID, String clientColor);
+    void updateGame(String gameID, String clientColor, String username);
 
     void clearGames();
 }

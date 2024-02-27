@@ -21,6 +21,10 @@ public class UserService {
         return authenticator.checkAuth(authToken);
     }
 
+    public static String getUser(String authToken){
+        return MemoryAuthDAO.getInstance().getUser(authToken);
+    }
+
     public static LoginResponse createAuthService(String username){
         AuthDAO authInfo = MemoryAuthDAO.getInstance();
         String authToken = authInfo.createAuth(username);

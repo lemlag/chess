@@ -6,7 +6,7 @@ import model.GameData;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MemoryGameDAO {
+public class MemoryGameDAO implements GameDAO{
 
     private static MemoryGameDAO instance;
     private final Map<String, GameData> gameMap;
@@ -20,18 +20,17 @@ public class MemoryGameDAO {
         return gameMap.values().toArray(new GameData[0]);
     }
 
-    public int createGame(String gameName){
+    public String createGame(String gameName){
         int gameID = gameIDCounter;
         gameIDCounter++;
         ChessGame chess = new ChessGame();
-        GameData gameModel = new GameData(null, null, gameName, gameID, chess);
+        GameData gameModel = new GameData("", "", gameName, gameID, chess);
         gameMap.put(String.valueOf(gameID), gameModel);
-        return gameID;
+        return String.valueOf(gameID);
     }
 
-    public ChessGame getGameFromData(String gameID){
-        GameData gameModel = gameMap.get(gameID);
-        return gameModel.game();
+    public GameData getGameData(String gameID){
+        return gameMap.get(gameID);
     }
 
     public void updateGame(String gameID, String clientColor, String username){

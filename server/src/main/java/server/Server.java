@@ -1,12 +1,12 @@
 package server;
 
 import com.google.gson.Gson;
-import requests.LoginRequest;
-import requests.RegisterRequest;
+import requests.*;
+import responses.*;
+import service.GameService;
 import service.UserService;
 
 import spark.*;
-import responses.*;
 
 public class Server {
 
@@ -23,6 +23,9 @@ public class Server {
         Spark.delete("/db", this::clearRequest);
         Spark.post("/session", this::logRequest);
         Spark.delete("/session", this::logoutRequest);
+        Spark.get("/game", this::listGamesRequest);
+        Spark.post("/game", this::createGameRequest);
+        Spark.put("/game", this::joinGameRequest);
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -50,8 +53,25 @@ public class Server {
     private Object regRequest(Request req, Response res){
         RegisterRequest request = gson.fromJson(req.body(), RegisterRequest.class);
         LoginResponse response = UserService.register(request);
-        System.out.println(gson.toJson(response, LoginResponse.class));
         return gson.toJson(response);
+    }
+
+    private Object listGamesRequest(Request req, Response res){
+        ListGamesResponse response = GameService.listGames();
+        return gson.toJson(response);
+    }
+
+    private Object createGameRequest(Request req, Response res){
+        CreateGameRequest request = gson.fromJson(req.body(), CreateGameRequest.class);
+        CreateGameResponse response = GameService.createGame(request.gameName());
+        return gson.toJson(response);
+    }
+
+    private Object joinGameRequest(Request req, Response res){
+        JoinGameRequest request = gson.fromJson(req.body(), JoinGameRequest.class);
+        String username = UserService.getUser(req.headers("authorization"));
+        GameService.joinGame(request, username);
+        return gson.toJson("");
     }
 
     private Object clearRequest(Request req, Response res){
