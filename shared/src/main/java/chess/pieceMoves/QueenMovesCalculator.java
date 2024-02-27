@@ -1,9 +1,11 @@
-package chess;
+package chess.pieceMoves;
+
+import chess.ChessBoard;
+import chess.ChessMove;
+import chess.ChessPosition;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 public class QueenMovesCalculator implements PieceMovesCalculator {
 

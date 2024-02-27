@@ -1,9 +1,14 @@
-package chess;
+package chess.pieceMoves;
+
+import chess.ChessBoard;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 
 import java.util.Collection;
 import java.util.HashSet;
 
-import static chess.BishopMovesCalculator.addMovePiece;
+import static chess.pieceMoves.BishopMovesCalculator.addMovePiece;
 
 public class RookMovesCalculator implements PieceMovesCalculator {
 
