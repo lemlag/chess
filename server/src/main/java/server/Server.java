@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import dataAccess.BadRequestException;
+import dataAccess.DataAccessException;
 import dataAccess.UnauthorizedException;
 import dataAccess.UsernameTakenException;
 import requests.*;
@@ -29,10 +30,6 @@ public class Server {
         Spark.get("/game", this::listGamesRequest);
         Spark.post("/game", this::createGameRequest);
         Spark.put("/game", this::joinGameRequest);
-
-        Spark.exception(UsernameTakenException.class, (exc, req, res) -> Spark.halt(403, "Error: already taken"));
-        Spark.exception(BadRequestException.class, (exc, req, res) -> Spark.halt(400, "Error: bad request"));
-        Spark.exception(UnauthorizedException.class, (exc, req, res) -> Spark.halt(401, "Error: unauthorized"));
 
         Spark.awaitInitialization();
         return Spark.port();
