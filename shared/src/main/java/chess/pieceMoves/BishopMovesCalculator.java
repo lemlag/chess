@@ -4,7 +4,6 @@ import chess.ChessBoard;
 import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
-import chess.pieceMoves.PieceMovesCalculator;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -12,10 +11,10 @@ import java.util.HashSet;
 public class BishopMovesCalculator implements PieceMovesCalculator {
 
 
-    Collection<ChessMove> ChessSet;
+    Collection<ChessMove> chessSet;
 
         public BishopMovesCalculator(){
-            ChessSet = new HashSet<>();
+            chessSet = new HashSet<>();
         }
 
         public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position){
@@ -41,11 +40,11 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
                 if (addMoves(board, position, bishop, row, col)) break;
             }
 
-            return this.ChessSet;
+            return this.chessSet;
         }
 
     private boolean addMoves(ChessBoard board, ChessPosition position, ChessPiece bishop, int row, int col) {
-        return addMovePiece(board, position, bishop, row, col, this.ChessSet);
+        return addMovePiece(board, position, bishop, row, col, this.chessSet);
     }
 
     static boolean addMovePiece(ChessBoard board, ChessPosition position, ChessPiece bishop, int row, int col, Collection<ChessMove> chessSet) {

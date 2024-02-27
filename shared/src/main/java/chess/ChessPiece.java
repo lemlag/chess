@@ -68,7 +68,7 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> ChessSet;
+        Collection<ChessMove> chessSet;
         PieceMovesCalculator mover;
         ChessPiece myPiece = board.getPiece(myPosition);
         if(myPiece.getPieceType() == PieceType.BISHOP){
@@ -88,7 +88,7 @@ public class ChessPiece {
         }
 
         assert mover != null;
-        ChessSet = mover.pieceMoves(board, myPosition);
-        return ChessSet;
+        chessSet = mover.pieceMoves(board, myPosition);
+        return chessSet;
     }
 }

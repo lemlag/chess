@@ -10,21 +10,21 @@ import java.util.HashSet;
 public class QueenMovesCalculator implements PieceMovesCalculator {
 
 
-    Collection<ChessMove> ChessSet;
+    Collection<ChessMove> chessSet;
 
     public QueenMovesCalculator(){
-        this.ChessSet = new HashSet<>();
+        this.chessSet = new HashSet<>();
     }
 
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position){
         Collection<ChessMove> RookSet;
         PieceMovesCalculator mover;
         mover = new BishopMovesCalculator();
-        this.ChessSet = mover.pieceMoves(board, position);
+        this.chessSet = mover.pieceMoves(board, position);
         mover = new RookMovesCalculator();
         RookSet = mover.pieceMoves(board, position);
-        this.ChessSet.addAll(RookSet);
+        this.chessSet.addAll(RookSet);
 
-        return this.ChessSet;
+        return this.chessSet;
     }
 }

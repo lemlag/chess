@@ -10,10 +10,10 @@ import java.util.HashSet;
 
 public class KingMovesCalculator implements PieceMovesCalculator {
 
-    Collection<ChessMove> ChessSet;
+    Collection<ChessMove> chessSet;
 
     public KingMovesCalculator(){
-        this.ChessSet = new HashSet<>();
+        this.chessSet = new HashSet<>();
     }
 
     public  Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
@@ -35,12 +35,12 @@ public class KingMovesCalculator implements PieceMovesCalculator {
                     }
                     enemy = board.getPiece(enemyPos);
                     if( enemy == null || enemy.getTeamColor() != king.getTeamColor()){
-                        this.ChessSet.add(new ChessMove(position, enemyPos, null ));
+                        this.chessSet.add(new ChessMove(position, enemyPos, null ));
                     }
                 }
             }
         }
 
-        return this.ChessSet;
+        return this.chessSet;
     }
 }

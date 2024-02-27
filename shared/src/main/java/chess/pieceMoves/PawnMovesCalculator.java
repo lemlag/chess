@@ -8,10 +8,10 @@ import java.util.HashSet;
 
 public class PawnMovesCalculator implements PieceMovesCalculator{
 
-    Collection<ChessMove> ChessSet;
+    Collection<ChessMove> chessSet;
 
     public PawnMovesCalculator(){
-        this.ChessSet = new HashSet<>();
+        this.chessSet = new HashSet<>();
     }
 
     public  Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position){
@@ -43,15 +43,15 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
 
         if(pawn.getTeamColor() == ChessGame.TeamColor.WHITE && row == 2){
             if(board.getPiece(new ChessPosition(row+1, col)) == null && board.getPiece(new ChessPosition(row+2, col)) == null){
-                this.ChessSet.add(new ChessMove(position, new ChessPosition(row+2, col), null));
+                this.chessSet.add(new ChessMove(position, new ChessPosition(row+2, col), null));
             }
         } else if(pawn.getTeamColor() == ChessGame.TeamColor.BLACK && row == 7){
             if(board.getPiece(new ChessPosition(row-1, col)) == null && board.getPiece(new ChessPosition(row-2, col)) == null){
-                this.ChessSet.add(new ChessMove(position, new ChessPosition(row-2, col), null));
+                this.chessSet.add(new ChessMove(position, new ChessPosition(row-2, col), null));
             }
         }
 
-        return this.ChessSet;
+        return this.chessSet;
     }
 
     private void checkDiagonal(ChessBoard board, ChessPosition position, ChessPiece pawn, ChessPosition enemyPos) {
@@ -63,12 +63,12 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
 
     private void promotion(ChessPosition position, ChessPosition enemyPos) {
         if(enemyPos.getRow() == 1 || enemyPos.getRow() == 8){
-            this.ChessSet.add(new ChessMove(position, enemyPos, ChessPiece.PieceType.QUEEN));
-            this.ChessSet.add(new ChessMove(position, enemyPos, ChessPiece.PieceType.ROOK));
-            this.ChessSet.add(new ChessMove(position, enemyPos, ChessPiece.PieceType.KNIGHT));
-            this.ChessSet.add(new ChessMove(position, enemyPos, ChessPiece.PieceType.BISHOP));
+            this.chessSet.add(new ChessMove(position, enemyPos, ChessPiece.PieceType.QUEEN));
+            this.chessSet.add(new ChessMove(position, enemyPos, ChessPiece.PieceType.ROOK));
+            this.chessSet.add(new ChessMove(position, enemyPos, ChessPiece.PieceType.KNIGHT));
+            this.chessSet.add(new ChessMove(position, enemyPos, ChessPiece.PieceType.BISHOP));
         } else {
-            this.ChessSet.add(new ChessMove(position, enemyPos, null));
+            this.chessSet.add(new ChessMove(position, enemyPos, null));
         }
     }
 }

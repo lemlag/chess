@@ -13,10 +13,10 @@ import static chess.pieceMoves.BishopMovesCalculator.addMovePiece;
 public class RookMovesCalculator implements PieceMovesCalculator {
 
 
-    Collection<ChessMove> ChessSet;
+    Collection<ChessMove> chessSet;
 
     public RookMovesCalculator(){
-        ChessSet = new HashSet<>();
+        chessSet = new HashSet<>();
     }
 
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position){
@@ -41,11 +41,11 @@ public class RookMovesCalculator implements PieceMovesCalculator {
             if (addSet(board, position, rook, row, col)) break;
         }
 
-        return this.ChessSet;
+        return this.chessSet;
     }
 
     private boolean addSet(ChessBoard board, ChessPosition position, ChessPiece rook, int row, int col) {
-        return addMovePiece(board, position, rook, row, col, this.ChessSet);
+        return addMovePiece(board, position, rook, row, col, this.chessSet);
     }
 }
 

@@ -10,10 +10,10 @@ import java.util.HashSet;
 
 public class KnightMoveCalculator implements PieceMovesCalculator{
 
-    Collection<ChessMove> ChessSet;
+    Collection<ChessMove> chessSet;
 
     public KnightMoveCalculator(){
-        ChessSet = new HashSet<>();
+        chessSet = new HashSet<>();
     }
 
 
@@ -30,14 +30,14 @@ public class KnightMoveCalculator implements PieceMovesCalculator{
                 enemyPos = new ChessPosition(row -2, col-1);
                 enemy = board.getPiece(enemyPos);
                 if( enemy == null || enemy.getTeamColor() != knight.getTeamColor()){
-                    this.ChessSet.add(new ChessMove(position, enemyPos, null ));
+                    this.chessSet.add(new ChessMove(position, enemyPos, null ));
                 }
             }
             if(col <= 7){
                 enemyPos = new ChessPosition(row-2, col+1);
                 enemy = board.getPiece(enemyPos);
                 if( enemy == null || enemy.getTeamColor() != knight.getTeamColor()){
-                    this.ChessSet.add(new ChessMove(position, enemyPos, null ));
+                    this.chessSet.add(new ChessMove(position, enemyPos, null ));
                 }
             }
         }
@@ -47,14 +47,14 @@ public class KnightMoveCalculator implements PieceMovesCalculator{
                 enemyPos = new ChessPosition(row +2, col-1);
                 enemy = board.getPiece(enemyPos);
                 if( enemy == null || enemy.getTeamColor() != knight.getTeamColor()){
-                    this.ChessSet.add(new ChessMove(position, enemyPos, null ));
+                    this.chessSet.add(new ChessMove(position, enemyPos, null ));
                 }
             }
             if(col <= 7){
                 enemyPos = new ChessPosition(row+2, col+1);
                 enemy = board.getPiece(enemyPos);
                 if( enemy == null || enemy.getTeamColor() != knight.getTeamColor()){
-                    this.ChessSet.add(new ChessMove(position, enemyPos, null ));
+                    this.chessSet.add(new ChessMove(position, enemyPos, null ));
                 }
             }
         }
@@ -64,14 +64,14 @@ public class KnightMoveCalculator implements PieceMovesCalculator{
                 enemyPos = new ChessPosition(row -1, col-2);
                 enemy = board.getPiece(enemyPos);
                 if( enemy == null || enemy.getTeamColor() != knight.getTeamColor()){
-                    this.ChessSet.add(new ChessMove(position, enemyPos, null ));
+                    this.chessSet.add(new ChessMove(position, enemyPos, null ));
                 }
             }
             if(row <= 7){
                 enemyPos = new ChessPosition(row+1, col-2);
                 enemy = board.getPiece(enemyPos);
                 if( enemy == null || enemy.getTeamColor() != knight.getTeamColor()){
-                    this.ChessSet.add(new ChessMove(position, enemyPos, null ));
+                    this.chessSet.add(new ChessMove(position, enemyPos, null ));
                 }
             }
         }
@@ -81,18 +81,18 @@ public class KnightMoveCalculator implements PieceMovesCalculator{
                 enemyPos = new ChessPosition(row -1, col+2);
                 enemy = board.getPiece(enemyPos);
                 if( enemy == null || enemy.getTeamColor() != knight.getTeamColor()){
-                    this.ChessSet.add(new ChessMove(position, enemyPos, null ));
+                    this.chessSet.add(new ChessMove(position, enemyPos, null ));
                 }
             }
             if(row <= 7){
                 enemyPos = new ChessPosition(row+1, col+2);
                 enemy = board.getPiece(enemyPos);
                 if( enemy == null || enemy.getTeamColor() != knight.getTeamColor()){
-                    this.ChessSet.add(new ChessMove(position, enemyPos, null ));
+                    this.chessSet.add(new ChessMove(position, enemyPos, null ));
                 }
             }
         }
 
-        return ChessSet;
+        return chessSet;
     }
 }
