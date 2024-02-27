@@ -11,12 +11,12 @@ public class GameService {
 
     public static ListGamesResponse listGames(){
         GameDAO gameInfo = MemoryGameDAO.getInstance();
-        return new ListGamesResponse(gameInfo.listGames());
+        return new ListGamesResponse(gameInfo.listGames(), null);
     }
 
     public static CreateGameResponse createGame(String gameName){
         GameDAO gameInfo = MemoryGameDAO.getInstance();
-        return new CreateGameResponse(gameInfo.createGame(gameName));
+        return new CreateGameResponse(gameInfo.createGame(gameName), null);
     }
 
     public static void joinGame(JoinGameRequest request, String username){

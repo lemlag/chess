@@ -28,7 +28,7 @@ public class UserService {
     public static LoginResponse createAuthService(String username){
         AuthDAO authInfo = MemoryAuthDAO.getInstance();
         String authToken = authInfo.createAuth(username);
-        return new LoginResponse(username, authToken);
+        return new LoginResponse(username, authToken, null);
     }
 
     public static LoginResponse logIn(LoginRequest request) throws UnauthorizedException {
