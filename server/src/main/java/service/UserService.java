@@ -31,15 +31,14 @@ public class UserService {
         return new LoginResponse(username, authToken);
     }
 
-    public static LoginResponse logIn(LoginRequest request){
+    public static LoginResponse logIn(LoginRequest request) throws UnauthorizedException {
         UserDAO userInfo = MemoryUserDAO.getInstance();
         LoginResponse response;
         UserData user = userInfo.getUser(request.username());
         if(user.password().equals(request.password())){
             response = createAuthService(request.username());
         } else{
-            response = null; // genError401();
-            System.out.println("No generated password");
+            throw new UnauthorizedException();
         }
 
         return response;
@@ -50,17 +49,14 @@ public class UserService {
         authInfo.deleteAuth(authToken);
     }
 
-    public static LoginResponse register(RegisterRequest request){
+    public static LoginResponse register (RegisterRequest request) throws UsernameTakenException{
         UserDAO userInfo = MemoryUserDAO.getInstance();
         LoginResponse response;
         if(userInfo.getUser(request.username()) == null){
             userInfo.createUser(request.username(), request.password(), request.email());
             response = createAuthService(request.username());
-
-            System.out.println("Yes generated password");
         } else{
-            response = null; //genError403();
-            System.out.println("No generated password");
+            throw new UsernameTakenException();
         }
         return response;
     }

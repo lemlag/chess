@@ -1,3 +1,5 @@
 package responses;
 
-public record ErrorResponse(String message){}
+public class ErrorResponse{
+    String message;
+}

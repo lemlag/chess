@@ -1,6 +1,9 @@
 package server;
 
 import com.google.gson.Gson;
+import dataAccess.BadRequestException;
+import dataAccess.UnauthorizedException;
+import dataAccess.UsernameTakenException;
 import requests.*;
 import responses.*;
 import service.GameService;
@@ -27,30 +30,34 @@ public class Server {
         Spark.post("/game", this::createGameRequest);
         Spark.put("/game", this::joinGameRequest);
 
+        Spark.exception(UsernameTakenException.class, (exc, req, res) -> Spark.halt(403, "Error: already taken"));
+        Spark.exception(BadRequestException.class, (exc, req, res) -> Spark.halt(400, "Error: bad request"));
+        Spark.exception(UnauthorizedException.class, (exc, req, res) -> Spark.halt(401, "Error: unauthorized"));
+
         Spark.awaitInitialization();
         return Spark.port();
     }
 
-    private void authRequest(Request req, Response res){
+    private void authRequest(Request req, Response res) throws UnauthorizedException {
         String authToken = req.headers("authorization");
         if(!UserService.containsAuth(authToken)){
-            Spark.halt(401, "Error: unauthorized");
+            throw new UnauthorizedException();
         }
     }
 
-    private Object logoutRequest(Request req, Response res){
+    private Object logoutRequest(Request req, Response res) throws UnauthorizedException{
         authRequest(req, res);
         UserService.logOut(req.headers("authorization"));
         return gson.toJson("");
     }
 
-    private Object logRequest(Request req, Response res){
+    private Object logRequest(Request req, Response res) throws UnauthorizedException {
         LoginRequest request = gson.fromJson(req.body(), LoginRequest.class);
         LoginResponse response = UserService.logIn(request);
         return gson.toJson(response);
     }
 
-    private Object regRequest(Request req, Response res){
+    private Object regRequest (Request req, Response res) throws UsernameTakenException{
         RegisterRequest request = gson.fromJson(req.body(), RegisterRequest.class);
         LoginResponse response = UserService.register(request);
         return gson.toJson(response);
