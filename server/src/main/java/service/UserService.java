@@ -41,6 +41,11 @@ public class UserService {
         return response;
     }
 
+    public static void logOut(String authToken){
+        AuthDAO authInfo = MemoryAuthDAO.getInstance();
+        authInfo.deleteAuth(authToken);
+    }
+
     public static LoginResponse register(RegisterRequest request){
         UserDAO userInfo = MemoryUserDAO.getInstance();
         LoginResponse response;
