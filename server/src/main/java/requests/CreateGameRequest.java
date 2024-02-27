@@ -1,5 +1,4 @@
 package requests;
 
-public class CreateGameRequest {
-    String gameName;
+public record CreateGameRequest (String gameName){
 }

@@ -1,6 +1,4 @@
 package requests;
 
-public class JoinGameRequest {
-    String playerColor;
-    String gameID;
+public record JoinGameRequest (String playerColor, String gameID){
 }

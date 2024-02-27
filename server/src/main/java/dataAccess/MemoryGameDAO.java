@@ -31,15 +31,15 @@ public class MemoryGameDAO {
 
     public ChessGame getGameFromData(String gameID){
         GameData gameModel = gameMap.get(gameID);
-        return gameModel.getGame();
+        return gameModel.game();
     }
 
     public void updateGame(String gameID, String clientColor, String username){
         GameData gameModel = gameMap.get(gameID);
         if (clientColor.equals("WHITE")){
-            gameModel.setWhiteUsername(username);
+            gameMap.replace(gameID, gameModel.gainUserWhite(username));
         } else{
-            gameModel.setBlackUsername(username);
+            gameMap.replace(gameID, gameModel.gainUserBlack(username));
         }
     }
 

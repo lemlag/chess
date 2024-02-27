@@ -2,8 +2,7 @@ package service;
 
 import dataAccess.*;
 import model.UserData;
-import requests.LoginRequest;
-import requests.RegisterRequest;
+import requests.*;
 import responses.*;
 
 public class UserService {
@@ -22,16 +21,18 @@ public class UserService {
         return authenticator.checkAuth(authToken);
     }
 
-    public static LoginResponse createAuth(LoginRequest request){
-        return null;
+    public static LoginResponse createAuthService(String username){
+        AuthDAO authInfo = MemoryAuthDAO.getInstance();
+        String authToken = authInfo.createAuth(username);
+        return new LoginResponse(username, authToken);
     }
 
     public static LoginResponse logIn(LoginRequest request){
         UserDAO userInfo = MemoryUserDAO.getInstance();
         LoginResponse response;
-        UserData user = userInfo.getUser(request.username);
-        if(user.getPassword().equals(request.password)){
-            response = createAuth(request);
+        UserData user = userInfo.getUser(request.username());
+        if(user.password().equals(request.password())){
+            response = createAuthService(request.username());
         } else{
             response = null; // genError401();
             System.out.println("No generated password");
@@ -43,9 +44,9 @@ public class UserService {
     public static LoginResponse register(RegisterRequest request){
         UserDAO userInfo = MemoryUserDAO.getInstance();
         LoginResponse response;
-        if(userInfo.getUser(request.username) == null){
-            userInfo.createUser(request.username, request.password, request.email);
-            response = createAuth(request);
+        if(userInfo.getUser(request.username()) == null){
+            userInfo.createUser(request.username(), request.password(), request.email());
+            response = createAuthService(request.username());
 
             System.out.println("Yes generated password");
         } else{

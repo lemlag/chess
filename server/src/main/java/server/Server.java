@@ -19,6 +19,8 @@ public class Server {
         Spark.before("/game", this::authRequest);
         Spark.post("/user", this::regRequest);
         Spark.delete("/db", this::clearRequest);
+        Spark.post("/session", this::logRequest);
+        Spark.delete("/session", this::logoutRequest);
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -31,10 +33,18 @@ public class Server {
         }
     }
 
+    private Object logoutRequest(Request req, Response res){
+        authRequest(req, res);
+        res.status(200);
+        return null;
+    }
+
     private Object logRequest(Request req, Response res){
         Gson gson = new Gson();
         LoginRequest request = gson.fromJson(req.body(), LoginRequest.class);
         LoginResponse response = UserService.logIn(request);
+        res.status(200);
+        res.body(gson.toJson(response));
         return gson.toJson(response);
     }
 
@@ -42,14 +52,17 @@ public class Server {
         Gson gson = new Gson();
         RegisterRequest request = gson.fromJson(req.body(), RegisterRequest.class);
         LoginResponse response = UserService.register(request);
+        System.out.println(gson.toJson(response, LoginResponse.class));
+        res.status(200);
         res.body(gson.toJson(response));
-
         return gson.toJson(response);
     }
 
     private Object clearRequest(Request req, Response res){
+        Gson gson = new Gson();
         UserService.clearDB();
-        return null;
+        res.status(200);
+        return gson.toJson("");
     }
 
     public void stop() {
