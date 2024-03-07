@@ -2,12 +2,14 @@ package service;
 
 import dataAccess.*;
 import model.UserData;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import requests.*;
 import responses.*;
 
-public class UserService {
+import java.sql.SQLException;
 
-    public static void clearDB(){
+public class UserService {
+    public static void clearDB() throws SQLException, DataAccessException {
         AuthDAO authenticator = MemoryAuthDAO.getInstance();
         authenticator.clearAuth();
         MemoryGameDAO gameData = MemoryGameDAO.getInstance();
@@ -31,11 +33,12 @@ public class UserService {
         return new LoginResponse(username, authToken, null);
     }
 
-    public static LoginResponse logIn(LoginRequest request) throws UnauthorizedException {
+    public static LoginResponse logIn(LoginRequest request) throws DataAccessException, SQLException {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         UserDAO userInfo = MemoryUserDAO.getInstance();
         LoginResponse response;
         UserData user = userInfo.getUser(request.username());
-        if(user != null && user.password().equals(request.password())){
+        if(user != null && encoder.matches(request.password(), user.password())){
             response = createAuthService(request.username());
         } else{
             throw new UnauthorizedException();
@@ -49,14 +52,16 @@ public class UserService {
         authInfo.deleteAuth(authToken);
     }
 
-    public static LoginResponse register (RegisterRequest request) throws UsernameTakenException, BadRequestException {
+    public static LoginResponse register (RegisterRequest request) throws DataAccessException, SQLException {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         UserDAO userInfo = MemoryUserDAO.getInstance();
         LoginResponse response;
         UserData user = userInfo.getUser(request.username());
         if(request.username() == null || request.password() == null || request.email() == null) {
             throw new BadRequestException();
         } else if(user == null){
-            userInfo.createUser(request.username(), request.password(), request.email());
+            String passHash = encoder.encode(request.password());
+            userInfo.createUser(request.username(), passHash, request.email());
             response = createAuthService(request.username());
         } else{
             throw new UsernameTakenException();
