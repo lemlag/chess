@@ -66,7 +66,7 @@ public class MySQLUserDAO implements UserDAO{
     public void clearUsers() throws DataAccessException, SQLException {
         try(Connection connection = DatabaseManager.getConnection()){
 
-            String sql = "TRUNCATE TABLE IF EXISTS users";
+            String sql = "DELETE FROM users";
             try(var preparedStatement = connection.prepareStatement(sql)){
                 preparedStatement.executeUpdate();
             }

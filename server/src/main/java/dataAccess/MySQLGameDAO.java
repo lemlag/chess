@@ -18,12 +18,13 @@ public class MySQLGameDAO implements GameDAO{
     public MySQLGameDAO() throws DataAccessException, SQLException {
         DatabaseManager.createDatabase();
         gson = new Gson();
+        gameIDCounter = 1;
         try(Connection connection = DatabaseManager.getConnection()) {
 
             var createUserTable = """
                     CREATE TABLE IF NOT EXISTS games (
                     gameID VARCHAR(80) NOT NULL,
-                    gameData VARCHAR(800) NOT NULL
+                    gameData VARCHAR(10000) NOT NULL
                     )""";
 
             try(var createTableStatement = connection.prepareStatement(createUserTable)){
@@ -120,9 +121,10 @@ public class MySQLGameDAO implements GameDAO{
     }
 
     public void clearGames() throws DataAccessException, SQLException {
+        gameIDCounter = 1;
         try(Connection connection = DatabaseManager.getConnection()){
 
-            String sql = "TRUNCATE TABLE IF EXISTS games";
+            String sql = "DELETE FROM games";
             try(var preparedStatement = connection.prepareStatement(sql)){
                 preparedStatement.executeUpdate();
             }
