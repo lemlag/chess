@@ -1,31 +1,30 @@
 package service;
 
-import dataAccess.BadRequestException;
-import dataAccess.GameDAO;
-import dataAccess.MemoryGameDAO;
-import dataAccess.UsernameTakenException;
+import dataAccess.*;
 import model.GameData;
 import requests.JoinGameRequest;
 import responses.CreateGameResponse;
 import responses.ListGamesResponse;
 
+import java.sql.SQLException;
+
 public class GameService {
 
-    public static ListGamesResponse listGames(){
-        GameDAO gameInfo = MemoryGameDAO.getInstance();
+    public static ListGamesResponse listGames() throws SQLException, DataAccessException {
+        GameDAO gameInfo = MySQLGameDAO.getInstance();
         return new ListGamesResponse(gameInfo.listGames(), null);
     }
 
-    public static CreateGameResponse createGame(String gameName) throws BadRequestException {
+    public static CreateGameResponse createGame(String gameName) throws DataAccessException, SQLException {
         if(gameName == null || gameName.isEmpty()){
             throw new BadRequestException();
         }
-        GameDAO gameInfo = MemoryGameDAO.getInstance();
+        GameDAO gameInfo = MySQLGameDAO.getInstance();
         return new CreateGameResponse(gameInfo.createGame(gameName), null);
     }
 
-    public static void joinGame(JoinGameRequest request, String username) throws UsernameTakenException, BadRequestException {
-        GameDAO gameInfo = MemoryGameDAO.getInstance();
+    public static void joinGame(JoinGameRequest request, String username) throws DataAccessException, SQLException {
+        GameDAO gameInfo = MySQLGameDAO.getInstance();
         if(request.gameID() == null){
             throw new BadRequestException();
         }

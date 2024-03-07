@@ -10,32 +10,32 @@ import java.sql.SQLException;
 
 public class UserService {
     public static void clearDB() throws SQLException, DataAccessException {
-        AuthDAO authenticator = MemoryAuthDAO.getInstance();
+        AuthDAO authenticator = MySQLAuthDAO.getInstance();
         authenticator.clearAuth();
-        MemoryGameDAO gameData = MemoryGameDAO.getInstance();
+        MySQLGameDAO gameData = MySQLGameDAO.getInstance();
         gameData.clearGames();
-        UserDAO userData = MemoryUserDAO.getInstance();
+        UserDAO userData = MySQLUserDAO.getInstance();
         userData.clearUsers();
     }
 
-    public static boolean containsAuth(String authToken){
-        AuthDAO authenticator = MemoryAuthDAO.getInstance();
+    public static boolean containsAuth(String authToken) throws SQLException, DataAccessException {
+        AuthDAO authenticator = MySQLAuthDAO.getInstance();
         return authenticator.checkAuth(authToken);
     }
 
-    public static String getUser(String authToken){
-        return MemoryAuthDAO.getInstance().authDAOGetUsername(authToken);
+    public static String getUser(String authToken) throws SQLException, DataAccessException {
+        return MySQLAuthDAO.getInstance().authDAOGetUsername(authToken);
     }
 
-    private static LoginResponse createAuthService(String username){
-        AuthDAO authInfo = MemoryAuthDAO.getInstance();
+    private static LoginResponse createAuthService(String username) throws SQLException, DataAccessException {
+        AuthDAO authInfo = MySQLAuthDAO.getInstance();
         String authToken = authInfo.createAuth(username);
         return new LoginResponse(username, authToken, null);
     }
 
     public static LoginResponse logIn(LoginRequest request) throws DataAccessException, SQLException {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        UserDAO userInfo = MemoryUserDAO.getInstance();
+        UserDAO userInfo = MySQLUserDAO.getInstance();
         LoginResponse response;
         UserData user = userInfo.getUser(request.username());
         if(user != null && encoder.matches(request.password(), user.password())){
@@ -47,14 +47,14 @@ public class UserService {
         return response;
     }
 
-    public static void logOut(String authToken){
-        AuthDAO authInfo = MemoryAuthDAO.getInstance();
+    public static void logOut(String authToken) throws SQLException, DataAccessException {
+        AuthDAO authInfo = MySQLAuthDAO.getInstance();
         authInfo.deleteAuth(authToken);
     }
 
     public static LoginResponse register (RegisterRequest request) throws DataAccessException, SQLException {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        UserDAO userInfo = MemoryUserDAO.getInstance();
+        UserDAO userInfo = MySQLUserDAO.getInstance();
         LoginResponse response;
         UserData user = userInfo.getUser(request.username());
         if(request.username() == null || request.password() == null || request.email() == null) {

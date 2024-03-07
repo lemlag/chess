@@ -48,7 +48,7 @@ public class MySQLAuthDAO implements AuthDAO{
     }
 
     public String authDAOGetUsername(String authToken) throws SQLException, DataAccessException {
-        AuthData authData = null;
+        AuthData authData;
         String username = null;
         try(Connection connection = DatabaseManager.getConnection()){
             String sql = "SELECT authData FROM authorizations WHERE authToken=?";
@@ -78,6 +78,9 @@ public class MySQLAuthDAO implements AuthDAO{
 
     public boolean checkAuth(String authToken) throws DataAccessException, SQLException {
         boolean existsAuth = false;
+        if(authToken == null){
+            return existsAuth;
+        }
         try(Connection connection = DatabaseManager.getConnection()){
             String sql = "SELECT authToken FROM authorizations WHERE authToken=?";
             try(var preparedStatement = connection.prepareStatement(sql)){
@@ -98,7 +101,7 @@ public class MySQLAuthDAO implements AuthDAO{
 
     public void clearAuth() throws SQLException, DataAccessException {
         try(Connection connection = DatabaseManager.getConnection()){
-            String sql = "TRUNCATE TABLE IF EXISTS authorizations";
+            String sql = "DELETE FROM authorizations";
             try(var preparedStatement = connection.prepareStatement(sql)){
                 preparedStatement.executeUpdate();
             }
