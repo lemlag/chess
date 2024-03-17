@@ -210,8 +210,6 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        Collection<ChessMove> tester;
-        ChessPiece piece;
         if(isInCheck(teamColor)){
             return testMoves(teamColor);
         }
@@ -244,8 +242,6 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        Collection<ChessMove> tester;
-        ChessPiece piece;
         if(!isInCheck(teamColor)){
             return testMoves(teamColor);
         }
