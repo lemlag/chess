@@ -2,12 +2,9 @@ package dataAccessTests;
 
 import dataAccess.DataAccessException;
 import dataAccess.MySQLAuthDAO;
-import dataAccess.MySQLUserDAO;
-import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import requests.RegisterRequest;
 import responses.LoginResponse;
 import service.UserService;
