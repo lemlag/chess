@@ -16,7 +16,6 @@ public class DrawChessBoard {
     private static final int EDGE_SIZE = 2;
     private static final int BOARD_INDEX = BOARD_SIZE_IN_SQUARES - 1;
 
-
     private static squareColor currSquare;
 
 
@@ -38,27 +37,33 @@ public class DrawChessBoard {
     private static void drawSquares(ChessBoard board, ChessGame.TeamColor player, PrintStream out) {
         if(player == ChessGame.TeamColor.WHITE) {
             for (int row = BOARD_SIZE_IN_SQUARES; row > 0; row--) {
-                drawPieces(board, out, row);
+                setHeaderColors(out);
+                out.print(" " + row + " ");
+                setNextSquare(out);
+                for (int col = 1; col <= BOARD_SIZE_IN_SQUARES; col++) {
+                    printNextPiece(out, board.getPiece(new ChessPosition(row, col)));
+                    setNextSquare(out);
+                }
+                setHeaderColors(out);
+                out.print(" " + row + " ");
+                out.print(SET_BG_COLOR_BLACK);
+                out.println();
             }
         } else{
             for (int row = 1; row <= BOARD_SIZE_IN_SQUARES; row++) {
-                drawPieces(board, out, row);
+                setHeaderColors(out);
+                out.print(" " + row + " ");
+                setNextSquare(out);
+                for (int col = BOARD_SIZE_IN_SQUARES; col > 0; col--) {
+                    printNextPiece(out, board.getPiece(new ChessPosition(row, col)));
+                    setNextSquare(out);
+                }
+                setHeaderColors(out);
+                out.print(" " + row + " ");
+                out.print(SET_BG_COLOR_BLACK);
+                out.println();
             }
         }
-    }
-
-    private static void drawPieces(ChessBoard board, PrintStream out, int row) {
-        setHeaderColors(out);
-        out.print(" " + row + " ");
-        setNextSquare(out);
-        for (int col = 1; col <= BOARD_SIZE_IN_SQUARES; col++) {
-            printNextPiece(out, board.getPiece(new ChessPosition(row, col)));
-            setNextSquare(out);
-        }
-        setHeaderColors(out);
-        out.print(" " + row + " ");
-        out.print(SET_BG_COLOR_BLACK);
-        out.println();
     }
 
     private static void printNextPiece(PrintStream out, ChessPiece piece) {
