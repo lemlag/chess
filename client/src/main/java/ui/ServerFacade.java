@@ -1,37 +1,91 @@
 package ui;
 
 import requests.*;
+import responses.CreateGameResponse;
+import responses.ListGamesResponse;
+import responses.LoginResponse;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+
+import static ui.ServerCaller.*;
 
 public class ServerFacade {
 
-    public static String logIn(String username, String password){
-
-        return "Working on it";
+    public static LoginResponse logIn(String username, String password){
+        LoginRequest request = new LoginRequest(username, password);
+        LoginResponse response;
+        try{
+            response = logInHandler(request);
+        } catch (URISyntaxException | IOException e) {
+            throw new RuntimeException(e);
+        }
+        return response;
     }
 
-    public static String logOut(){
-        return "false";
+    public static String logOut(String authToken){
+        String message;
+        try{
+            logOutHandler(authToken);
+            message = "Success";
+        } catch (URISyntaxException | IOException e) {
+            throw new RuntimeException(e);
+        }
+        return message;
     }
 
     public static String clear(){
-        return "false";
+        String message;
+        try{
+            clearDatabaseHandler();
+            message = "Success";
+        } catch (URISyntaxException | IOException e) {
+            throw new RuntimeException(e);
+        }
+        return message;
     }
 
-    public static String register(String username, String password, String email){
+    public static LoginResponse register(String username, String password, String email){
         RegisterRequest request = new RegisterRequest(username, password, email);
-        return "false";
+        LoginResponse response;
+        try{
+            response = registerHandler(request);
+        } catch (IOException | URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        return response;
     }
 
-    public static String joinGame(){
-        return "false";
+    public static String joinGame(String playerColor, String gameID, String authToken) {
+        JoinGameRequest request = new JoinGameRequest(playerColor, gameID);
+        String message;
+        try{
+            joinGameHandler(request, authToken);
+            message = "Success";
+        } catch (IOException | URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        return message;
     }
 
-    public static void createGame(){
-
+    public static CreateGameResponse createGame(String gameName, String authToken){
+        CreateGameRequest request = new CreateGameRequest(gameName);
+        CreateGameResponse response;
+        try{
+            response = createGameHandler(request, authToken);
+        } catch (URISyntaxException | IOException e) {
+            throw new RuntimeException(e);
+        }
+        return response;
     }
 
-    public static void listGames(){
-
+    public static void listGames(String authToken){
+        ListGamesResponse response;
+        try{
+            response = listGamesHandler(authToken);
+        } catch (IOException | URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
