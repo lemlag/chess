@@ -79,13 +79,14 @@ public class ServerFacade {
         return response;
     }
 
-    public static void listGames(String authToken){
+    public static ListGamesResponse listGames(String authToken){
         ListGamesResponse response;
         try{
             response = listGamesHandler(authToken);
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException(e);
         }
+        return response;
     }
 
 }

@@ -1,14 +1,18 @@
 package ui;
 
+import responses.*;
+
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
+import static ui.ServerFacade.*;
 
 public class Client {
     private static boolean loggedIn;
-
+    private static String username;
+    private static String authToken;
     static{
         loggedIn = false;
     }
@@ -20,7 +24,7 @@ public class Client {
         boolean notQuitting = true;
         Scanner scanner = new Scanner(System.in);
         if(loggedIn){
-            gameMenu(out, scanner);
+            gameMenu(out, scanner, authToken);
         } else{
             notQuitting = loginMenu(out, scanner);
         }
@@ -28,8 +32,7 @@ public class Client {
         return notQuitting;
     }
 
-    private static void gameMenu(PrintStream out, Scanner scanner) {
-        boolean notQuitting = true;
+    private static void gameMenu(PrintStream out, Scanner scanner, String authToken) {
         out.println("Logged In");
         out.println("1. Create Game");
         out.println("2. List Games");
@@ -41,8 +44,17 @@ public class Client {
         out.print("Menu >>> ");
         String line = scanner.nextLine();
         switch (line) {
-            case "1" -> out.println("Creating Game...");
-            case "2" -> out.println("Listing Games...");
+            case "1" -> {
+                out.print("Enter Game Name:   ");
+                String gameName = scanner.nextLine();
+                out.println("Creating Game...");
+                CreateGameResponse createGameResponse = createGame(gameName, authToken);
+                out.println("Your game ID is " + createGameResponse.getGameID());
+            }
+            case "2" -> {
+                ListGamesResponse listGamesResponse = listGames(authToken);
+                out.println("Listing Games...");
+            }
             case "3" -> {
                 out.println("Joining Game...");
             }
@@ -70,10 +82,27 @@ public class Client {
         String line = scanner.nextLine();
         switch (line) {
             case "1" -> {
+                out.print("Username:  ");
+                username = scanner.nextLine();
+                out.print("Password:  ");
+                String password = scanner.nextLine();
                 out.println("Logging in...");
+                LoginResponse loginResponse = logIn(username, password);
+                authToken = loginResponse.getAuthToken();
                 loggedIn = true;
             }
-            case "2" -> out.println("Registering...");
+            case "2" -> {
+                out.print("E-mail address:   ");
+                String email = scanner.nextLine();
+                out.print("Username:  ");
+                username = scanner.nextLine();
+                out.print("Password:  ");
+                String password = scanner.nextLine();
+                out.println("Logging in...");
+                LoginResponse loginResponse = register(username, password, email);
+                authToken = loginResponse.getAuthToken();
+                loggedIn = true;
+            }
             case "3" -> {
                 out.println("Quitting...");
                 notQuitting = false;
