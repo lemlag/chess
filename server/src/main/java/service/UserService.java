@@ -16,6 +16,7 @@ public class UserService {
         gameData.clearGames();
         UserDAO userData = MySQLUserDAO.getInstance();
         userData.clearUsers();
+
     }
 
     public static boolean containsAuth(String authToken) throws SQLException, DataAccessException {

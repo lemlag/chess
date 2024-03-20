@@ -161,6 +161,7 @@ public class Server {
     }
 
     private Object clearRequest(Request req, Response res){
+
         ErrorResponse response;
         try {
             UserService.clearDB();

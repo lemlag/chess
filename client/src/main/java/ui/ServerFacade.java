@@ -1,5 +1,6 @@
 package ui;
 
+import dataAccess.DataAccessException;
 import requests.*;
 import responses.CreateGameResponse;
 import responses.ListGamesResponse;
@@ -19,6 +20,8 @@ public class ServerFacade {
             response = logInHandler(request);
         } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
+        } catch (DataAccessException e){
+            response = new LoginResponse(null, null, e.getMessage());
         }
         return response;
     }
@@ -30,6 +33,8 @@ public class ServerFacade {
             message = "Success";
         } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
+        } catch (DataAccessException e){
+            message = e.getMessage();
         }
         return message;
     }
@@ -41,6 +46,8 @@ public class ServerFacade {
             message = "Success";
         } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
+        } catch (DataAccessException e){
+            message = e.getMessage();
         }
         return message;
     }
@@ -52,6 +59,8 @@ public class ServerFacade {
             response = registerHandler(request);
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException(e);
+        } catch (DataAccessException e){
+            response = new LoginResponse(null, null, e.getMessage());
         }
         return response;
     }
@@ -64,6 +73,8 @@ public class ServerFacade {
             message = "Success";
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException(e);
+        } catch (DataAccessException e){
+            message = e.getMessage();
         }
         return message;
     }
@@ -75,6 +86,8 @@ public class ServerFacade {
             response = createGameHandler(request, authToken);
         } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
+        } catch (DataAccessException e){
+            response = new CreateGameResponse(null,  e.getMessage());
         }
         return response;
     }
@@ -85,6 +98,8 @@ public class ServerFacade {
             response = listGamesHandler(authToken);
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException(e);
+        } catch (DataAccessException e){
+            response = new ListGamesResponse(null,  e.getMessage());
         }
         return response;
     }

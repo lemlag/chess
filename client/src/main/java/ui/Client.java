@@ -1,11 +1,14 @@
 package ui;
 
+import chess.ChessGame;
+import model.GameData;
 import responses.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
+import static ui.DrawChessBoard.drawBoard;
 import static ui.EscapeSequences.*;
 import static ui.ServerFacade.*;
 
@@ -13,6 +16,9 @@ public class Client {
     private static boolean loggedIn;
     private static String username;
     private static String authToken;
+
+    private static GameData[] gameList;
+
     static{
         loggedIn = false;
     }
@@ -33,7 +39,7 @@ public class Client {
     }
 
     private static void gameMenu(PrintStream out, Scanner scanner, String authToken) {
-        out.println("Logged In");
+        out.println("Logged In - " + username);
         out.println("1. Create Game");
         out.println("2. List Games");
         out.println("3. Join Game");
@@ -49,19 +55,78 @@ public class Client {
                 String gameName = scanner.nextLine();
                 out.println("Creating Game...");
                 CreateGameResponse createGameResponse = createGame(gameName, authToken);
-                out.println("Your game ID is " + createGameResponse.getGameID());
+                if(createGameResponse.getGameID() != null) {
+                    out.println("Your game ID is " + createGameResponse.getGameID());
+                } else{
+                    out.println(createGameResponse.getMessage());
+                }
             }
             case "2" -> {
                 ListGamesResponse listGamesResponse = listGames(authToken);
-                out.println("Listing Games...");
+                if(listGamesResponse.getGames() != null) {
+                    out.println("Listing Games...");
+                    gameList = listGamesResponse.getGames();
+                    if(gameList.length == 0){
+                        out.println("There are no games to list");
+                    }
+                    for (int i = 0; i < gameList.length; i++) {
+                        GameData data = gameList[i];
+                        out.print("Game number " + i + ".  ");
+                        out.println("Game ID: " + data.gameID());
+                        out.println("Game Name: " + data.gameName());
+                        out.println("White player username: " + data.whiteUsername());
+                        out.println("Black player username: " + data.blackUsername());
+                        out.println();
+                    }
+                } else{
+                    out.println(listGamesResponse.getMessage());
+                }
             }
             case "3" -> {
-                out.println("Joining Game...");
+                gameList = listGames(authToken).getGames();
+                out.print("Enter the game number of the game you would like to join: ");
+                String gameNum = scanner.nextLine();
+                if(Integer.parseInt(gameNum) < gameList.length) {
+                    GameData game = gameList[Integer.parseInt(gameNum)];
+                    String gameID = String.valueOf(game.gameID());
+                    out.println("Enter WHITE to join as white player or BLACK to join as black player:");
+                    String playerColor = scanner.nextLine();
+                    String message = joinGame(playerColor, gameID, authToken);
+                    if (message.equals("Success")) {
+                        out.println("Joining Game...");
+//                drawBoard(game.game(), ChessGame.TeamColor.valueOf(playerColor));
+                        drawBoard(game.game(), ChessGame.TeamColor.WHITE);
+                        drawBoard(game.game(), ChessGame.TeamColor.BLACK);
+                    } else {
+                        out.println(message);
+                    }
+                } else{
+                    out.println("Error: Game number " + gameNum + " undefined");
+                }
             }
-            case "4" -> out.println("Joining as observer...");
+            case "4" -> {
+                gameList = listGames(authToken).getGames();
+                out.print("Enter the game number of the game you would like to join: ");
+                String gameNum = scanner.nextLine();
+                GameData game = gameList[Integer.parseInt(gameNum)];
+                String gameID = String.valueOf(game.gameID());
+                out.println("Joining as observer...");
+                String message = joinGame(null, gameID, authToken);
+                if(message.equals("Success")) {
+                    drawBoard(game.game(), ChessGame.TeamColor.WHITE);
+                    drawBoard(game.game(), ChessGame.TeamColor.BLACK);
+                } else{
+                    out.println(message);
+                }
+            }
             case "5" -> {
                 out.println("Logging out...");
-                loggedIn = false;
+                String message = logOut(authToken);
+                if(message.equals("Success")) {
+                    loggedIn = false;
+                } else{
+                    out.println(message);
+                }
             }
             default -> {
                 out.println("Help Menu:");
@@ -88,8 +153,12 @@ public class Client {
                 String password = scanner.nextLine();
                 out.println("Logging in...");
                 LoginResponse loginResponse = logIn(username, password);
-                authToken = loginResponse.getAuthToken();
-                loggedIn = true;
+                if(loginResponse.getAuthToken() != null) {
+                    authToken = loginResponse.getAuthToken();
+                    loggedIn = true;
+                } else{
+                    out.println(loginResponse.getMessage());
+                }
             }
             case "2" -> {
                 out.print("E-mail address:   ");
@@ -100,8 +169,12 @@ public class Client {
                 String password = scanner.nextLine();
                 out.println("Logging in...");
                 LoginResponse loginResponse = register(username, password, email);
+                if(loginResponse.getAuthToken() != null){
                 authToken = loginResponse.getAuthToken();
                 loggedIn = true;
+                } else{
+                    out.println(loginResponse.getMessage());
+                }
             }
             case "3" -> {
                 out.println("Quitting...");
