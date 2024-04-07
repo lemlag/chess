@@ -76,6 +76,7 @@ public class ServerFacade {
         } catch (DataAccessException e){
             message = e.getMessage();
         }
+        new WebSocketCommunicator(ServerMessageObserver client);
         return message;
     }
 
