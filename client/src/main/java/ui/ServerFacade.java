@@ -76,7 +76,6 @@ public class ServerFacade {
         } catch (DataAccessException e){
             message = e.getMessage();
         }
-
         return message;
     }
 

@@ -2,7 +2,7 @@ package serviceTests;
 
 import chess.ChessGame;
 import dataAccess.DataAccessException;
-import dataAccess.MemoryGameDAO;
+import dataAccess.MySQLGameDAO;
 import dataAccess.UsernameTakenException;
 import model.GameData;
 import org.junit.jupiter.api.Assertions;
@@ -45,7 +45,7 @@ public class GameServiceTests {
     @Test
     public void createGameTrue() throws DataAccessException, SQLException {
         CreateGameResponse resp = GameService.createGame("One");
-        Assertions.assertNotNull(MemoryGameDAO.getInstance().getGameData(resp.getGameID()));
+        Assertions.assertNotNull(MySQLGameDAO.getInstance().getGameData(resp.getGameID()));
     }
 
     @Test

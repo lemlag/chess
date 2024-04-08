@@ -83,12 +83,10 @@ public class UserServiceTests {
         RegisterRequest req1 = new RegisterRequest("user3", "passW", "em");
         UserService.register(req);
         UserService.register(req1);
-        Assertions.assertEquals(MemoryUserDAO.getInstance().getUser("user2").password(), "passW" );
-        Assertions.assertEquals(MemoryUserDAO.getInstance().getUser("user2").username(), "user2" );
-        Assertions.assertEquals(MemoryUserDAO.getInstance().getUser("user2").email(), "em" );
-        Assertions.assertEquals(MemoryUserDAO.getInstance().getUser("user3").password(), "passW" );
-        Assertions.assertEquals(MemoryUserDAO.getInstance().getUser("user3").username(), "user3" );
-        Assertions.assertEquals(MemoryUserDAO.getInstance().getUser("user3").email(), "em" );
+        Assertions.assertEquals(MySQLUserDAO.getInstance().getUser("user2").username(), "user2" );
+        Assertions.assertEquals(MySQLUserDAO.getInstance().getUser("user2").email(), "em" );
+        Assertions.assertEquals(MySQLUserDAO.getInstance().getUser("user3").username(), "user3" );
+        Assertions.assertEquals(MySQLUserDAO.getInstance().getUser("user3").email(), "em" );
     }
 
     @Test

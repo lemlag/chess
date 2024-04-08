@@ -17,8 +17,6 @@ public class Client {
     private static String username;
     private static String authToken;
 
-    private static GameData[] gameList;
-
     static{
         loggedIn = false;
     }
@@ -39,7 +37,7 @@ public class Client {
     }
 
     private static void gameMenu(PrintStream out, Scanner scanner, String authToken) {
-        out.println("Logged In - " + username);
+        out.println(STR."Logged In - \{username}");
         out.println("1. Create Game");
         out.println("2. List Games");
         out.println("3. Join Game");
@@ -49,6 +47,7 @@ public class Client {
         out.println();
         out.print("Menu >>> ");
         String line = scanner.nextLine();
+        GameData[] gameList;
         switch (line) {
             case "1" -> {
                 out.print("Enter Game Name:   ");
@@ -56,7 +55,7 @@ public class Client {
                 out.println("Creating Game...");
                 CreateGameResponse createGameResponse = createGame(gameName, authToken);
                 if(createGameResponse.getGameID() != null) {
-                    out.println("Your game ID is " + createGameResponse.getGameID());
+                    out.println(STR."Your game ID is \{createGameResponse.getGameID()}");
                 } else{
                     out.println(createGameResponse.getMessage());
                 }
@@ -71,11 +70,11 @@ public class Client {
                     }
                     for (int i = 0; i < gameList.length; i++) {
                         GameData data = gameList[i];
-                        out.print("Game number " + i + ".  ");
-                        out.println("Game ID: " + data.gameID());
-                        out.println("Game Name: " + data.gameName());
-                        out.println("White player username: " + data.whiteUsername());
-                        out.println("Black player username: " + data.blackUsername());
+                        out.print(STR."Game number \{i}.  ");
+                        out.println(STR."Game ID: \{data.gameID()}");
+                        out.println(STR."Game Name: \{data.gameName()}");
+                        out.println(STR."White player username: \{data.whiteUsername()}");
+                        out.println(STR."Black player username: \{data.blackUsername()}");
                         out.println();
                     }
                 } else{
@@ -101,7 +100,7 @@ public class Client {
                         out.println(message);
                     }
                 } else{
-                    out.println("Error: Game number " + gameNum + " undefined");
+                    out.println(STR."Error: Game number \{gameNum} undefined");
                 }
             }
             case "4" -> {
