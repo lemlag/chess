@@ -3,6 +3,8 @@ package ui;
 import chess.ChessGame;
 import model.GameData;
 import responses.*;
+import webSocketMessages.serverMessages.ErrorMessage;
+import webSocketMessages.serverMessages.ServerMessage;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -12,33 +14,41 @@ import static ui.DrawChessBoard.drawBoard;
 import static ui.EscapeSequences.*;
 import static ui.ServerFacade.*;
 
-public class Client {
-    private static boolean loggedIn;
-    private static String username;
-    private static String authToken;
-    private static boolean gameJoined;
+public class Client implements ServerMessageObserver{
+    private boolean loggedIn;
+    private String username;
+    private String authToken;
+    private volatile boolean gameJoined;
+    private String playerColor;
+    private GameData game;
+    private final PrintStream out;
+    private final Scanner scanner;
 
-    static{
+    public Client(){
         loggedIn = false;
         gameJoined = false;
+        out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        scanner = new Scanner(System.in);
     }
 
-    public static boolean drawMenu(){
-        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        out.print(SET_BG_COLOR_BLACK);
-        out.print(SET_TEXT_COLOR_GREEN);
+    public void drawMenu() {
         boolean notQuitting = true;
-        Scanner scanner = new Scanner(System.in);
-        if(loggedIn){
-            gameMenu(out, scanner, authToken);
-        } else{
-            notQuitting = loginMenu(out, scanner);
-        }
+        while (notQuitting) {
 
-        return notQuitting;
+            out.print(SET_BG_COLOR_BLACK);
+            out.print(SET_TEXT_COLOR_GREEN);
+            if(gameJoined) {
+                joinedMenu();
+            } else if (loggedIn) {
+                gameMenu();
+            } else {
+                notQuitting = loginMenu();
+            }
+
+        }
     }
 
-    private static void gameMenu(PrintStream out, Scanner scanner, String authToken) {
+    private void gameMenu() {
         out.println(STR."Logged In - \{username}");
         out.println("1. Create Game");
         out.println("2. List Games");
@@ -88,17 +98,16 @@ public class Client {
                 out.print("Enter the game number of the game you would like to join: ");
                 String gameNum = scanner.nextLine();
                 if(Integer.parseInt(gameNum) < gameList.length) {
-                    GameData game = gameList[Integer.parseInt(gameNum)];
+                    game = gameList[Integer.parseInt(gameNum)];
                     String gameID = String.valueOf(game.gameID());
                     out.println("Enter WHITE to join as white player or BLACK to join as black player:");
-                    String playerColor = scanner.nextLine();
+                    playerColor = scanner.nextLine();
                     String message = joinGame(playerColor, gameID, authToken);
                     if (message.equals("Success")) {
                         out.println("Joining Game...");
                         gameJoined = true;
-//                drawBoard(game.game(), ChessGame.TeamColor.valueOf(playerColor));
-                        drawBoard(game.game(), ChessGame.TeamColor.WHITE);
-                        drawBoard(game.game(), ChessGame.TeamColor.BLACK);
+                        out.println(ERASE_SCREEN);
+                        drawJoinClient();
                     } else {
                         out.println(message);
                     }
@@ -110,13 +119,16 @@ public class Client {
                 gameList = listGames(authToken).getGames();
                 out.print("Enter the game number of the game you would like to join: ");
                 String gameNum = scanner.nextLine();
-                GameData game = gameList[Integer.parseInt(gameNum)];
+                game = gameList[Integer.parseInt(gameNum)];
                 String gameID = String.valueOf(game.gameID());
                 out.println("Joining as observer...");
                 String message = joinGame(null, gameID, authToken);
                 if(message.equals("Success")) {
-                    drawBoard(game.game(), ChessGame.TeamColor.WHITE);
-                    drawBoard(game.game(), ChessGame.TeamColor.BLACK);
+                    out.print("Enter the viewpoint you would like to have (WHITE/BLACK): ");
+                    playerColor = scanner.nextLine();
+                    gameJoined = true;
+                    out.println(ERASE_SCREEN);
+                    drawJoinClient();
                 } else{
                     out.println(message);
                 }
@@ -137,7 +149,7 @@ public class Client {
         }
     }
 
-    private static boolean loginMenu(PrintStream out, Scanner scanner) {
+    private boolean loginMenu() {
         boolean notQuitting = true;
         out.println("Not Logged In");
         out.println("1. Login");
@@ -190,5 +202,60 @@ public class Client {
         return notQuitting;
     }
 
+    private void joinedMenu(){
+        String line = scanner.nextLine();
+        out.println(ERASE_SCREEN);
+        switch (line) {
+            case "1" ->{
+                drawJoinClient();
+            }
+            case "2" ->{
+
+            }
+            case "3" ->{
+
+            }
+            case "4" ->{
+
+            }
+            case "5"-> {
+
+            }
+            default -> {
+                out.println("Help Menu:");
+                out.println("Type the number associated with the action you would like to take. Then press enter.");
+                drawJoinClient();
+            }
+        }
+    }
+
+    public void drawJoinClient(){
+        drawBoard(game.game(), ChessGame.TeamColor.valueOf(playerColor));
+        out.println(STR."Game - \{game.gameID()} - User - \{username} - Color - \{playerColor}");
+        out.println("1. Redraw Chess Board");
+        out.println("2. Highlight Legal Moves");
+        out.println("3. Make Move");
+        out.println("4. Leave");
+        out.println("5. Resign");
+        out.println("6. Help");
+        out.println();
+        out.print("ChessGame >>> ");
+    }
+
+    private void displayNotification(){
+        out.println(ERASE_SCREEN);
+        drawJoinClient();
+        out.println("");
+    }
+
+    @Override
+    public void notify(ServerMessage message){
+        switch (message.getServerMessageType()) {
+            case NOTIFICATION -> displayNotification(((NotificationMessage) message).getMessage());
+            case ERROR -> displayError(((ErrorMessage) message).getErrorMessage());
+            case LOAD_GAME -> loadGame(((LoadGameMessage) message).getGame());
+        }
+
+    }
 
 }
