@@ -101,13 +101,18 @@ public class MySQLGameDAO implements GameDAO{
         return game;
     }
 
-    public void updateGame(String gameID, String clientColor, String username) throws DataAccessException, SQLException {
+    public void updateGame(String gameID, String clientColor, String username, boolean moveMade, ChessGame board) throws DataAccessException, SQLException {
         GameData game = getGameData(gameID);
         if (clientColor.equals("WHITE")){
             game =  game.gainUserWhite(username);
         } else{
             game = game.gainUserBlack(username);
         }
+
+        if(moveMade) {
+            game = game.moveMade(board);
+        }
+
         try(Connection connection = DatabaseManager.getConnection()) {
 
             String sql = "UPDATE games SET gameData = ? WHERE gameID = ?";

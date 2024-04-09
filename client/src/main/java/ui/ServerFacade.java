@@ -1,6 +1,7 @@
 package ui;
 
 import dataAccess.DataAccessException;
+import model.GameData;
 import requests.*;
 import responses.CreateGameResponse;
 import responses.ListGamesResponse;
@@ -12,6 +13,8 @@ import java.net.URISyntaxException;
 import static ui.ServerCaller.*;
 
 public class ServerFacade {
+
+    public static WebSocketCommunicator websocket;
 
     public static LoginResponse logIn(String username, String password){
         LoginRequest request = new LoginRequest(username, password);
@@ -71,7 +74,7 @@ public class ServerFacade {
         try{
             joinGameHandler(request, authToken);
             message = "Success";
-            new WebSocketCommunicator(client);
+            websocket = new WebSocketCommunicator(client);
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException(e);
         } catch (Exception e){
@@ -104,5 +107,10 @@ public class ServerFacade {
         }
         return response;
     }
+
+    public static GameData highlightSquares(String authtoken){
+        return null;
+    }
+
 
 }

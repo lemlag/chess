@@ -1,14 +1,20 @@
 package service;
 
+import chess.ChessGame;
 import dataAccess.*;
 import model.GameData;
 import requests.JoinGameRequest;
 import responses.CreateGameResponse;
 import responses.ListGamesResponse;
+import server.WSServer;
 
 import java.sql.SQLException;
 
+
 public class GameService {
+
+
+
 
     public static ListGamesResponse listGames() throws SQLException, DataAccessException {
         GameDAO gameInfo = MySQLGameDAO.getInstance();
@@ -20,7 +26,9 @@ public class GameService {
             throw new BadRequestException();
         }
         GameDAO gameInfo = MySQLGameDAO.getInstance();
-        return new CreateGameResponse(gameInfo.createGame(gameName), null);
+        String gameID = gameInfo.createGame(gameName);
+        WSServer.updateObserverGames(gameID);
+        return new CreateGameResponse(gameID, null);
     }
 
     public static void joinGame(JoinGameRequest request, String username) throws DataAccessException, SQLException {
@@ -35,11 +43,26 @@ public class GameService {
             return;
         } else if((request.playerColor().equals("WHITE")  && gameDetails.whiteUsername() == null)
                 || (request.playerColor().equals("BLACK") && gameDetails.blackUsername() == null)){
-            gameInfo.updateGame(request.gameID(), request.playerColor(), username);
+            gameInfo.updateGame(request.gameID(), request.playerColor(), username, false, null);
         } else if((request.playerColor().equals("WHITE") || request.playerColor().equals("BLACK"))){
             throw new UsernameTakenException();
         } else{
             throw new BadRequestException();
         }
+    }
+
+    public static void removeUser(String username, String gameID) throws SQLException, DataAccessException {
+        GameDAO gameInfo = MySQLGameDAO.getInstance();
+        GameData game = gameInfo.getGameData(gameID);
+        if(game.whiteUsername().equals(username)){
+            gameInfo.updateGame(gameID, "WHITE", null, false, null);
+        } else if(game.blackUsername().equals(username)){
+            gameInfo.updateGame(gameID, "BLACK", null, false, null);
+        }
+    }
+
+    public static GameData getGame(String gameID) throws SQLException, DataAccessException {
+        GameDAO gameInfo = MySQLGameDAO.getInstance();
+        return gameInfo.getGameData(gameID);
     }
 }
