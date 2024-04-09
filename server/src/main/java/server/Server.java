@@ -31,6 +31,7 @@ public class Server {
         Spark.get("/game", this::listGamesRequest);
         Spark.post("/game", this::createGameRequest);
         Spark.put("/game", this::joinGameRequest);
+        Spark.webSocket("/connect", WSServer.class);
 
         Spark.awaitInitialization();
         return Spark.port();
