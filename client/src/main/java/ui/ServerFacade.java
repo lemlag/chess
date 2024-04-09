@@ -65,15 +65,16 @@ public class ServerFacade {
         return response;
     }
 
-    public static String joinGame(String playerColor, String gameID, String authToken) {
+    public static String joinGame(String playerColor, String gameID, String authToken, ServerMessageObserver client) {
         JoinGameRequest request = new JoinGameRequest(playerColor, gameID);
         String message;
         try{
             joinGameHandler(request, authToken);
             message = "Success";
+            new WebSocketCommunicator(client);
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException(e);
-        } catch (DataAccessException e){
+        } catch (Exception e){
             message = e.getMessage();
         }
         return message;

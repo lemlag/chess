@@ -6,6 +6,7 @@ import responses.CreateGameResponse;
 import responses.ListGamesResponse;
 import responses.LoginResponse;
 import server.Server;
+import ui.Client;
 import ui.ServerCaller;
 import ui.ServerFacade;
 
@@ -19,7 +20,7 @@ public class ServerFacadeTests {
     public static void init() {
         server = new Server();
         var port = server.run(0);
-        System.out.println("Started test HTTP server on " + port);
+        System.out.println(STR."Started test HTTP server on \{port}");
         ServerCaller.setPort(port);
     }
 
@@ -79,7 +80,7 @@ public class ServerFacadeTests {
     @Test
     public void joinGamePositive() {
         CreateGameResponse createGameResponse = ServerFacade.createGame("One", authToken);
-        ServerFacade.joinGame("WHITE", createGameResponse.getGameID(), authToken);
+        ServerFacade.joinGame("WHITE", createGameResponse.getGameID(), authToken, new Client());
         ListGamesResponse response = ServerFacade.listGames(authToken);
         GameData game = response.getGames()[0];
         Assertions.assertEquals("User", game.whiteUsername());
@@ -87,13 +88,13 @@ public class ServerFacadeTests {
 
     @Test
     public void joinGameNegative() {
-        Assertions.assertEquals("Error: bad request", ServerFacade.joinGame("BLACK", "1", authToken));
+        Assertions.assertEquals("Error: bad request", ServerFacade.joinGame("BLACK", "1", authToken, new Client()));
     }
 
     @Test
     public void joinObsPositive() {
         CreateGameResponse createGameResponse = ServerFacade.createGame("One", authToken);
-        ServerFacade.joinGame(null, createGameResponse.getGameID(), authToken);
+        ServerFacade.joinGame(null, createGameResponse.getGameID(), authToken, new Client());
         ListGamesResponse response = ServerFacade.listGames(authToken);
         GameData game = response.getGames()[0];
         Assertions.assertNull(game.whiteUsername());
@@ -101,7 +102,7 @@ public class ServerFacadeTests {
 
     @Test
     public void joinObsNegative() {
-        Assertions.assertEquals("Error: bad request", ServerFacade.joinGame(null, "1", authToken));
+        Assertions.assertEquals("Error: bad request", ServerFacade.joinGame(null, "1", authToken, new Client()));
     }
 
     @Test

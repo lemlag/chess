@@ -4,6 +4,8 @@ import chess.ChessGame;
 import model.GameData;
 import responses.*;
 import webSocketMessages.serverMessages.ErrorMessage;
+import webSocketMessages.serverMessages.LoadGameMessage;
+import webSocketMessages.serverMessages.NotificationMessage;
 import webSocketMessages.serverMessages.ServerMessage;
 
 import java.io.PrintStream;
@@ -102,7 +104,7 @@ public class Client implements ServerMessageObserver{
                     String gameID = String.valueOf(game.gameID());
                     out.println("Enter WHITE to join as white player or BLACK to join as black player:");
                     playerColor = scanner.nextLine();
-                    String message = joinGame(playerColor, gameID, authToken);
+                    String message = joinGame(playerColor, gameID, authToken, this);
                     if (message.equals("Success")) {
                         out.println("Joining Game...");
                         gameJoined = true;
@@ -122,7 +124,7 @@ public class Client implements ServerMessageObserver{
                 game = gameList[Integer.parseInt(gameNum)];
                 String gameID = String.valueOf(game.gameID());
                 out.println("Joining as observer...");
-                String message = joinGame(null, gameID, authToken);
+                String message = joinGame(null, gameID, authToken, this);
                 if(message.equals("Success")) {
                     out.print("Enter the viewpoint you would like to have (WHITE/BLACK): ");
                     playerColor = scanner.nextLine();
@@ -207,7 +209,7 @@ public class Client implements ServerMessageObserver{
         out.println(ERASE_SCREEN);
         switch (line) {
             case "1" ->{
-                drawJoinClient();
+                //get the game again
             }
             case "2" ->{
 
@@ -242,10 +244,24 @@ public class Client implements ServerMessageObserver{
         out.print("ChessGame >>> ");
     }
 
-    private void displayNotification(){
+    private void displayNotification(String message){
         out.println(ERASE_SCREEN);
+        drawBoard(game.game(), ChessGame.TeamColor.valueOf(playerColor));
+        out.println();
+        out.println(message);
+    }
+
+    private void displayError(String error){
+        out.println(ERASE_SCREEN);
+        drawBoard(game.game(), ChessGame.TeamColor.valueOf(playerColor));
+        out.println();
+        out.println(error);
+    }
+
+    private void loadGame(GameData game){
+        out.println(ERASE_SCREEN);
+        this.game = game;
         drawJoinClient();
-        out.println("");
     }
 
     @Override
