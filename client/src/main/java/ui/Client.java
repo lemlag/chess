@@ -16,9 +16,11 @@ public class Client {
     private static boolean loggedIn;
     private static String username;
     private static String authToken;
+    private static boolean gameJoined;
 
     static{
         loggedIn = false;
+        gameJoined = false;
     }
 
     public static boolean drawMenu(){
@@ -93,6 +95,7 @@ public class Client {
                     String message = joinGame(playerColor, gameID, authToken);
                     if (message.equals("Success")) {
                         out.println("Joining Game...");
+                        gameJoined = true;
 //                drawBoard(game.game(), ChessGame.TeamColor.valueOf(playerColor));
                         drawBoard(game.game(), ChessGame.TeamColor.WHITE);
                         drawBoard(game.game(), ChessGame.TeamColor.BLACK);
