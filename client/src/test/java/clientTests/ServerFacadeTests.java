@@ -20,7 +20,7 @@ public class ServerFacadeTests {
     public static void init() {
         server = new Server();
         var port = server.run(0);
-        System.out.println(STR."Started test HTTP server on \{port}");
+        System.out.println("Started test HTTP server on " + port);
         ServerCaller.setPort(port);
     }
 
