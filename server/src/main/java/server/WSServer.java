@@ -40,7 +40,7 @@ public class WSServer {
             UserGameCommand command = gson.fromJson(message, UserGameCommand.class);
             String response;
             String authToken = command.getAuthString();
-            System.out.println(STR."\n\{authToken}");
+
             if (UserService.containsAuth(authToken)) {
                 String user = UserService.getUser(authToken);
                 System.out.println(user);
@@ -78,7 +78,7 @@ public class WSServer {
                 session.getRemote().sendString(response);
             }
         } catch(Exception e){
-            ErrorMessage errorMessage = new ErrorMessage(STR."error : \{e.getMessage()}");
+            ErrorMessage errorMessage = new ErrorMessage("error : " + e.getMessage());
             session.getRemote().sendString(gson.toJson(errorMessage));
         }
     }
@@ -90,7 +90,7 @@ public class WSServer {
         }
         observers.get(gameID).remove(authToken);
         sessionsMap.remove(authToken);
-        NotificationMessage notification = new NotificationMessage(STR."\{user} has left the game.");
+        NotificationMessage notification = new NotificationMessage(user + " has left the game.");
         notifyObservers(null, gameID, gson.toJson(notification));
     }
 
@@ -99,10 +99,10 @@ public class WSServer {
         NotificationMessage notification;
         if(game.whiteUsername().equals(user)){
             GameService.finishGame(gameID);
-            notification = new NotificationMessage(STR."\{user} has resigned. Black player wins!");
+            notification = new NotificationMessage(user + " has resigned. Black player wins!");
         } else if(game.blackUsername().equals(user)){
             GameService.finishGame(gameID);
-            notification = new NotificationMessage(STR."\{user} has resigned. White player wins!");
+            notification = new NotificationMessage(user + " has resigned. White player wins!");
         } else{
             throw new DataAccessException("Not a player, cannot resign");
         }
@@ -122,7 +122,7 @@ public class WSServer {
         sessionsMap.put(authToken, session);
         observers.get(gameID).add(authToken);
         LoadGameMessage loadGame = new LoadGameMessage(GameService.getGame(gameID));
-        NotificationMessage notification = new NotificationMessage(STR."\{user} has joined the game as \{color} player.");
+        NotificationMessage notification = new NotificationMessage(user + " has joined the game as " + color + " player.");
         notifyObservers(authToken, gameID, gson.toJson(notification));
         return gson.toJson(loadGame);
     }
@@ -134,7 +134,7 @@ public class WSServer {
         sessionsMap.put(authToken, session);
         observers.get(gameID).add(authToken);
         LoadGameMessage loadGame = new LoadGameMessage(GameService.getGame(gameID));
-        NotificationMessage notification = new NotificationMessage(STR."\{user} has joined the game as an observer.");
+        NotificationMessage notification = new NotificationMessage(user + " has joined the game as an observer.");
         notifyObservers(authToken, gameID, gson.toJson(notification));
         return gson.toJson(loadGame);
     }
@@ -185,7 +185,7 @@ public class WSServer {
             case 7 -> endingCol = "g";
             case 8 -> endingCol = "h";
         }
-        return new NotificationMessage(STR."\{username} moved piece " + startingCol + startingRow + " to " + endingCol + endingRow);
+        return new NotificationMessage(username + " moved piece " + startingCol + startingRow + " to " + endingCol + endingRow);
     }
 
     public static void updateObserverGames(String gameID){
