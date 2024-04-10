@@ -2,16 +2,14 @@ package server;
 
 import com.google.gson.Gson;
 import dataAccess.DataAccessException;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.*;
 import service.GameService;
 import service.UserService;
 import webSocketMessages.serverMessages.LoadGameMessage;
 import webSocketMessages.serverMessages.NotificationMessage;
-import webSocketMessages.userCommands.JoinObserverCommand;
-import webSocketMessages.userCommands.JoinPlayerCommand;
-import webSocketMessages.userCommands.LeaveCommand;
-import webSocketMessages.userCommands.UserGameCommand;
+import webSocketMessages.userCommands.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -41,10 +39,13 @@ public class WSServer {
             switch (command.getCommandType()) {
                 case LEAVE -> {
                     LeaveCommand com = (LeaveCommand) command;
-                    response = leave(authToken, user, com.getGameID().toString());
+                    leave(authToken, user, com.getGameID().toString());
+                    session.close();
+                    response = null;
                 }
                 case RESIGN -> {
-                    response = resign();
+                    ResignCommand com = (ResignCommand) command;
+                    response = resign(authToken, user, com.getGameID().toString());
                 }
                 case MAKE_MOVE -> {
                     response = make_move();
@@ -63,7 +64,9 @@ public class WSServer {
             response = null;
         }
         System.out.printf("Received: %s", message);
-        session.getRemote().sendString( response);
+        if(response != null) {
+            session.getRemote().sendString(response);
+        }
     }
 
     private void leave(String authToken, String user, String gameID) throws SQLException, DataAccessException, IOException {
@@ -72,6 +75,22 @@ public class WSServer {
         sessionsMap.remove(authToken);
         NotificationMessage notification = new NotificationMessage(STR."\{user} has left the game.");
         notifyObservers(authToken, gameID, gson.toJson(notification));
+    }
+
+    private String resign(String authToken, String user, String gameID) throws SQLException, DataAccessException, IOException {
+        GameData game = GameService.getGame(gameID);
+        NotificationMessage notification;
+        if(game.whiteUsername().equals(user)){
+            GameService.finishGame(gameID);
+            notification = new NotificationMessage(STR."\{user} has resigned. Black player wins!");
+        } else if(game.blackUsername().equals(user)){
+            GameService.finishGame(gameID);
+            notification = new NotificationMessage(STR."\{user} has resigned. White player wins!");
+        } else{
+            throw new DataAccessException("Not a player, cannot resign");
+        }
+        notifyObservers(authToken, gameID, gson.toJson(notification));
+        return gson.toJson(notification);
     }
 
     private String join_player(String gameID, String authToken, Session session, String user, String color) throws IOException, SQLException, DataAccessException {

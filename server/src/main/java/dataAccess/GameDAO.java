@@ -13,7 +13,7 @@ public interface GameDAO {
 
     GameData getGameData(String gameID) throws DataAccessException, SQLException;
 
-    void updateGame(String gameID, String clientColor, String username, boolean moveMade, ChessGame board) throws DataAccessException, SQLException;
+    void updateGame(String gameID, String clientColor, String username, boolean moveMade, ChessGame board, boolean finish) throws DataAccessException, SQLException;
 
     void clearGames() throws DataAccessException, SQLException;
 }

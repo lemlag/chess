@@ -24,7 +24,7 @@ public class MemoryGameDAO implements GameDAO{
         int gameID = gameIDCounter;
         gameIDCounter++;
         ChessGame chess = new ChessGame();
-        GameData gameModel = new GameData(null, null, gameName, gameID, chess);
+        GameData gameModel = new GameData(null, null, gameName, gameID, chess, false);
         gameMap.put(String.valueOf(gameID), gameModel);
         return String.valueOf(gameID);
     }
@@ -33,7 +33,7 @@ public class MemoryGameDAO implements GameDAO{
         return gameMap.get(gameID);
     }
 
-    public void updateGame(String gameID, String clientColor, String username, boolean makeMove, ChessGame chess){
+    public void updateGame(String gameID, String clientColor, String username, boolean makeMove, ChessGame chess, boolean finish){
         GameData gameModel = gameMap.get(gameID);
         if (clientColor.equals("WHITE")){
             gameMap.replace(gameID, gameModel.gainUserWhite(username));

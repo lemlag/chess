@@ -76,14 +76,14 @@ public class GameDAOTests {
 
     @Test
     public void updateGamePos() throws SQLException, DataAccessException {
-        gameDB.updateGame(response2.getGameID(), "WHITE", "gamers", false, null);
+        gameDB.updateGame(response2.getGameID(), "WHITE", "gamers", false, null, false);
         Assertions.assertEquals(gameDB.getGameData(response2.getGameID()).whiteUsername(), "gamers");
     }
 
     @Test
     public void updateGameNeg() throws Exception{
         String gameID = gameDB.createGame("Fly");
-        gameDB.updateGame(response2.getGameID(), "WHITE", "germs", false, null);
+        gameDB.updateGame(response2.getGameID(), "WHITE", "germs", false, null, false);
         Assertions.assertNull(gameDB.getGameData(gameID).whiteUsername());
     }
 

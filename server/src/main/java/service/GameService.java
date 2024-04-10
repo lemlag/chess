@@ -43,7 +43,7 @@ public class GameService {
             return;
         } else if((request.playerColor().equals("WHITE")  && gameDetails.whiteUsername() == null)
                 || (request.playerColor().equals("BLACK") && gameDetails.blackUsername() == null)){
-            gameInfo.updateGame(request.gameID(), request.playerColor(), username, false, null);
+            gameInfo.updateGame(request.gameID(), request.playerColor(), username, false, null, false);
         } else if((request.playerColor().equals("WHITE") || request.playerColor().equals("BLACK"))){
             throw new UsernameTakenException();
         } else{
@@ -55,14 +55,20 @@ public class GameService {
         GameDAO gameInfo = MySQLGameDAO.getInstance();
         GameData game = gameInfo.getGameData(gameID);
         if(game.whiteUsername().equals(username)){
-            gameInfo.updateGame(gameID, "WHITE", null, false, null);
+            gameInfo.updateGame(gameID, "WHITE", null, false, null, false);
         } else if(game.blackUsername().equals(username)){
-            gameInfo.updateGame(gameID, "BLACK", null, false, null);
+            gameInfo.updateGame(gameID, "BLACK", null, false, null, false);
         }
     }
 
     public static GameData getGame(String gameID) throws SQLException, DataAccessException {
         GameDAO gameInfo = MySQLGameDAO.getInstance();
         return gameInfo.getGameData(gameID);
+    }
+
+    public static void finishGame(String gameID) throws SQLException, DataAccessException {
+        GameDAO gameInfo = MySQLGameDAO.getInstance();
+        GameData game = gameInfo.getGameData(gameID);
+        gameInfo.updateGame(gameID, null, null, false, null, true);
     }
 }

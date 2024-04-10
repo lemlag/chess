@@ -66,7 +66,7 @@ public class MySQLGameDAO implements GameDAO{
         int gameID = gameIDCounter;
         gameIDCounter++;
         ChessGame chess = new ChessGame();
-        GameData gameModel = new GameData(null, null, gameName, gameID, chess);
+        GameData gameModel = new GameData(null, null, gameName, gameID, chess, false);
         String gameDataString = gson.toJson(gameModel);
         try(Connection connection = DatabaseManager.getConnection()) {
 
@@ -101,8 +101,14 @@ public class MySQLGameDAO implements GameDAO{
         return game;
     }
 
-    public void updateGame(String gameID, String clientColor, String username, boolean moveMade, ChessGame board) throws DataAccessException, SQLException {
+    public void updateGame(String gameID, String clientColor, String username, boolean moveMade, ChessGame board, boolean finish) throws DataAccessException, SQLException {
         GameData game = getGameData(gameID);
+        if(game.finished()){
+            throw new DataAccessException("This game has finished.");
+        }
+        if(finish){
+            game = game.finish();
+        }
         if (clientColor.equals("WHITE")){
             game =  game.gainUserWhite(username);
         } else{
