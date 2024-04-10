@@ -89,9 +89,11 @@ public class ChessGame {
      * Makes a move in a chess game
      *
      * @param move chess move to preform
+     * @return
      * @throws InvalidMoveException if move is invalid
      */
-    public void makeMove(ChessMove move) throws InvalidMoveException {
+    public TeamColor makeMove(ChessMove move) throws InvalidMoveException {
+        TeamColor turn = this.teamTurn;
         Collection<ChessMove> validPieceMoves = null;
         ChessPiece piece = this.board.getPiece(move.getStartPosition());
         if(piece.getTeamColor() == this.getTeamTurn()){
@@ -113,6 +115,7 @@ public class ChessGame {
         } else{
             throw new InvalidMoveException();
         }
+        return turn;
     }
 
     /**

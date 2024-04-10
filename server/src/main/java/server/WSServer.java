@@ -2,14 +2,13 @@ package server;
 
 import chess.*;
 import com.google.gson.*;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import dataAccess.DataAccessException;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.*;
 import service.GameService;
 import service.UserService;
+import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.LoadGameMessage;
 import webSocketMessages.serverMessages.NotificationMessage;
 import webSocketMessages.userCommands.*;
@@ -34,55 +33,65 @@ public class WSServer {
         gson = builder.create();
     }
 
-
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws Exception {
-        UserGameCommand command = gson.fromJson(message, UserGameCommand.class);
-        String response;
-        String authToken = command.getAuthString();
-        if(UserService.containsAuth(authToken)) {
-            String user = UserService.getUser(authToken);
-            switch (command.getCommandType()) {
-                case LEAVE -> {
-                    LeaveCommand com = (LeaveCommand) command;
-                    leave(authToken, user, com.getGameID().toString());
-                    session.close();
-                    response = null;
+
+        try {
+            UserGameCommand command = gson.fromJson(message, UserGameCommand.class);
+            String response;
+            String authToken = command.getAuthString();
+            System.out.println(STR."\n\{authToken}");
+            if (UserService.containsAuth(authToken)) {
+                String user = UserService.getUser(authToken);
+                System.out.println(user);
+                switch (command.getCommandType()) {
+                    case LEAVE -> {
+                        LeaveCommand com = (LeaveCommand) command;
+                        leave(authToken, user, com.getGameID().toString());
+                        response = null;
+                    }
+                    case RESIGN -> {
+                        ResignCommand com = (ResignCommand) command;
+                        response = resign(authToken, user, com.getGameID().toString());
+                    }
+                    case MAKE_MOVE -> {
+                        MakeMoveCommand com = (MakeMoveCommand) command;
+                        make_move(authToken, com.getGameID().toString(), user, com.getMove());
+                        response = null;
+                    }
+                    case JOIN_PLAYER -> {
+                        JoinPlayerCommand com = (JoinPlayerCommand) command;
+                        response = join_player(com.getGameID().toString(), com.getAuthString(), session, user, com.getPlayerColor().toString());
+                    }
+                    case JOIN_OBSERVER -> {
+                        JoinObserverCommand com = (JoinObserverCommand) command;
+                        response = join_observer(com.getGameID().toString(), com.getAuthString(), session, user);
+                    }
+                    default -> throw new DataAccessException("Invalid request");
                 }
-                case RESIGN -> {
-                    ResignCommand com = (ResignCommand) command;
-                    response = resign(authToken, user, com.getGameID().toString());
-                }
-                case MAKE_MOVE -> {
-                    MakeMoveCommand com = (MakeMoveCommand) command;
-                    make_move(authToken, com.getGameID().toString(), user, com.getMove());
-                    response = null;
-                }
-                case JOIN_PLAYER -> {
-                    JoinPlayerCommand com = (JoinPlayerCommand) command;
-                    response = join_player(com.getGameID().toString(), com.getAuthString(), session, user, com.getPlayerColor().toString());
-                }
-                case JOIN_OBSERVER -> {
-                    JoinObserverCommand com = (JoinObserverCommand) command;
-                    response = join_observer(com.getGameID().toString(), com.getAuthString(), session, user);
-                }
-                default -> response = null;
+            } else {
+                throw new DataAccessException("Unauthorized");
             }
-        } else{
-            response = null;
-        }
-        System.out.printf("Received: %s", message);
-        if(response != null) {
-            session.getRemote().sendString(response);
+            System.out.printf("\nReceived: %s", message);
+            System.out.printf("\nSending: %s", response);
+            if (response != null) {
+                session.getRemote().sendString(response);
+            }
+        } catch(Exception e){
+            ErrorMessage errorMessage = new ErrorMessage(STR."error : \{e.getMessage()}");
+            session.getRemote().sendString(gson.toJson(errorMessage));
         }
     }
 
     private void leave(String authToken, String user, String gameID) throws SQLException, DataAccessException, IOException {
-        GameService.removeUser(user, gameID);
+        GameData game = GameService.getGame(gameID);
+        if(user.equals(game.whiteUsername()) || user.equals(game.blackUsername())) {
+            GameService.removeUser(user, gameID);
+        }
         observers.get(gameID).remove(authToken);
         sessionsMap.remove(authToken);
         NotificationMessage notification = new NotificationMessage(STR."\{user} has left the game.");
-        notifyObservers(authToken, gameID, gson.toJson(notification));
+        notifyObservers(null, gameID, gson.toJson(notification));
     }
 
     private String resign(String authToken, String user, String gameID) throws SQLException, DataAccessException, IOException {
@@ -102,6 +111,14 @@ public class WSServer {
     }
 
     private String join_player(String gameID, String authToken, Session session, String user, String color) throws IOException, SQLException, DataAccessException {
+        GameData gameData = GameService.getGame(gameID);
+        if(color.equals("WHITE") && (!gameData.whiteUsername().equals(user))){
+            throw new DataAccessException("Incorrect username");
+        } else if(color.equals("BLACK") && (!gameData.blackUsername().equals(user))){
+            throw new DataAccessException("Incorrect username");
+        } else if(!color.equals("BLACK") && !color.equals("WHITE")){
+            throw new DataAccessException("Wrong color");
+        }
         sessionsMap.put(authToken, session);
         observers.get(gameID).add(authToken);
         LoadGameMessage loadGame = new LoadGameMessage(GameService.getGame(gameID));
@@ -111,7 +128,10 @@ public class WSServer {
     }
 
     private String join_observer(String gameID, String authToken, Session session, String user) throws IOException, SQLException, DataAccessException {
-        sessionsMap.put(gameID, session);
+        if(GameService.getGame(gameID) == null){
+            throw new DataAccessException("Bad game ID");
+        }
+        sessionsMap.put(authToken, session);
         observers.get(gameID).add(authToken);
         LoadGameMessage loadGame = new LoadGameMessage(GameService.getGame(gameID));
         NotificationMessage notification = new NotificationMessage(STR."\{user} has joined the game as an observer.");
@@ -122,10 +142,26 @@ public class WSServer {
     private void make_move(String authToken, String gameID, String username, ChessMove move) throws SQLException, DataAccessException, InvalidMoveException, IOException {
         GameData gameStats = GameService.getGame(gameID);
         ChessGame game = gameStats.game();
-        game.makeMove(move);
+        ChessGame.TeamColor teamColor;
+        
+        if(username.equals(gameStats.blackUsername())){
+            teamColor = ChessGame.TeamColor.BLACK;
+        } else if(username.equals(gameStats.whiteUsername())){
+            teamColor = ChessGame.TeamColor.WHITE;
+        } else{
+            throw new DataAccessException("Not a player");
+        }
+        if(game.makeMove(move) != teamColor){
+            throw new DataAccessException("Wrong player");
+        }
         GameService.updateMove(gameID, username, game);
         LoadGameMessage loadGame = new LoadGameMessage(GameService.getGame(gameID));
         notifyObservers(null, gameID, gson.toJson(loadGame));
+        NotificationMessage notification = getNotificationMessage(username, move);
+        notifyObservers(authToken, gameID, gson.toJson(notification));
+    }
+
+    private static NotificationMessage getNotificationMessage(String username, ChessMove move) {
         String startingRow = String.valueOf(move.getStartPosition().getRow());
         String endingRow = String.valueOf(move.getEndPosition().getRow());
         String startingCol = null, endingCol = null;
@@ -149,8 +185,7 @@ public class WSServer {
             case 7 -> endingCol = "g";
             case 8 -> endingCol = "h";
         }
-        NotificationMessage notification = new NotificationMessage(STR."\{username} moved piece " + startingCol + startingRow + " to " + endingCol + endingRow);
-        notifyObservers(authToken, gameID, gson.toJson(notification));
+        return new NotificationMessage(STR."\{username} moved piece " + startingCol + startingRow + " to " + endingCol + endingRow);
     }
 
     public static void updateObserverGames(String gameID){
@@ -163,7 +198,8 @@ public class WSServer {
             if(observer.equals(authToken)){
                 continue;
             }
-            sessionsMap.get(observer).getRemote().sendString(message);
+            Session session = sessionsMap.get(observer);
+            session.getRemote().sendString(message);
         }
     }
 

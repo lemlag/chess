@@ -106,16 +106,15 @@ public class MySQLGameDAO implements GameDAO{
         if(game.finished()){
             throw new DataAccessException("This game has finished.");
         }
+
+
         if(finish){
             game = game.finish();
-        }
-
-
-        if(moveMade) {
+        } else if(moveMade) {
             game = game.moveMade(board);
         }else if (clientColor.equals("WHITE")){
             game =  game.gainUserWhite(username);
-        } else{
+        } else {
             game = game.gainUserBlack(username);
         }
 
