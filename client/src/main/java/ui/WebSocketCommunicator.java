@@ -1,6 +1,5 @@
 package ui;
 import com.google.gson.*;
-import server.WSServer;
 import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.LoadGameMessage;
 import webSocketMessages.serverMessages.ServerMessage;

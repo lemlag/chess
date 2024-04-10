@@ -1,7 +1,6 @@
 package ui;
 
 import com.google.gson.Gson;
-import dataAccess.DataAccessException;
 import requests.*;
 import responses.*;
 
@@ -22,13 +21,13 @@ public class ServerCaller{
     public static void setPort(int portNum){
         port = portNum;
     }
-    public static LoginResponse logInHandler(LoginRequest request) throws URISyntaxException, IOException, DataAccessException {
+    public static LoginResponse logInHandler(LoginRequest request) throws Exception {
         String reqBody = gson.toJson(request);
         URI uri = new URI("http://localhost:" + port + "/session");
         return getLoginResponse(reqBody, uri);
     }
 
-    public static void logOutHandler(String authToken) throws URISyntaxException, IOException, DataAccessException {
+    public static void logOutHandler(String authToken) throws Exception {
         URI uri = new URI("http://localhost:" + port + "/session");
         HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
 
@@ -39,13 +38,13 @@ public class ServerCaller{
         errorHandling(http);
     }
 
-    public static LoginResponse registerHandler(RegisterRequest request) throws IOException, URISyntaxException, DataAccessException {
+    public static LoginResponse registerHandler(RegisterRequest request) throws IOException, URISyntaxException, Exception {
         String reqBody = gson.toJson(request);
         URI uri = new URI("http://localhost:" + port + "/user");
         return getLoginResponse(reqBody, uri);
     }
 
-    public static ListGamesResponse listGamesHandler(String authToken) throws IOException, URISyntaxException, DataAccessException {
+    public static ListGamesResponse listGamesHandler(String authToken) throws IOException, URISyntaxException, Exception {
 
         URI uri = new URI("http://localhost:" + port + "/game");
         HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
@@ -66,12 +65,12 @@ public class ServerCaller{
                 InputStreamReader inputStreamReader = new InputStreamReader(respBody);
                 response = gson.fromJson(inputStreamReader, ListGamesResponse.class);
             }
-            throw new DataAccessException(response.getMessage());
+            throw new Exception(response.getMessage());
         }
         return response;
     }
 
-    public static CreateGameResponse createGameHandler(CreateGameRequest request, String authToken) throws URISyntaxException, IOException, DataAccessException {
+    public static CreateGameResponse createGameHandler(CreateGameRequest request, String authToken) throws URISyntaxException, IOException, Exception {
         String reqBody = gson.toJson(request);
         URI uri = new URI("http://localhost:" + port + "/game");
         HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
@@ -93,12 +92,12 @@ public class ServerCaller{
                 InputStreamReader inputStreamReader = new InputStreamReader(respBody);
                 response = gson.fromJson(inputStreamReader, CreateGameResponse.class);
             }
-            throw new DataAccessException(response.getMessage());
+            throw new Exception(response.getMessage());
         }
         return response;
     }
 
-    public static void joinGameHandler(JoinGameRequest request, String authToken) throws IOException, URISyntaxException, DataAccessException {
+    public static void joinGameHandler(JoinGameRequest request, String authToken) throws IOException, URISyntaxException, Exception {
         String reqBody = gson.toJson(request);
         URI uri = new URI("http://localhost:" + port + "/game");
         HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
@@ -111,18 +110,18 @@ public class ServerCaller{
         errorHandling(http);
     }
 
-    private static void errorHandling(HttpURLConnection http) throws IOException, DataAccessException {
+    private static void errorHandling(HttpURLConnection http) throws IOException, Exception {
         if(http.getResponseCode() != HttpURLConnection.HTTP_OK) {
             ErrorResponse response;
             try (InputStream respBody = http.getErrorStream()) {
                 InputStreamReader inputStreamReader = new InputStreamReader(respBody);
                 response = gson.fromJson(inputStreamReader, ErrorResponse.class);
             }
-            throw new DataAccessException(response.getMessage());
+            throw new Exception(response.getMessage());
         }
     }
 
-    public static void clearDatabaseHandler() throws URISyntaxException, IOException, DataAccessException {
+    public static void clearDatabaseHandler() throws URISyntaxException, IOException, Exception {
         URI uri = new URI("http://localhost:" + port + "/db");
         HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
         http.setReadTimeout(5000);
@@ -131,7 +130,7 @@ public class ServerCaller{
         errorHandling(http);
     }
 
-    private static LoginResponse getLoginResponse(String reqBody, URI uri) throws IOException, DataAccessException {
+    private static LoginResponse getLoginResponse(String reqBody, URI uri) throws IOException, Exception {
         LoginResponse response;
         HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
 
@@ -150,7 +149,7 @@ public class ServerCaller{
                 InputStreamReader inputStreamReader = new InputStreamReader(respBody);
                 response = gson.fromJson(inputStreamReader, LoginResponse.class);
             }
-            throw new DataAccessException(response.getMessage());
+            throw new Exception(response.getMessage());
         }
 
         return response;
