@@ -6,7 +6,7 @@ public class JoinObserverCommand extends UserGameCommand{
     public JoinObserverCommand(String authToken, int obs_gameID) {
         super(authToken);
         commandType = CommandType.JOIN_OBSERVER;
-        gameID = (Integer) obs_gameID;
+        gameID = obs_gameID;
     }
 
     public Integer getGameID(){

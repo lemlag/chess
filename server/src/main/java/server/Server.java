@@ -24,6 +24,7 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
         gson = new Gson();
+        Spark.webSocket("/connect", WSServer.class);
         Spark.post("/user", this::regRequest);
         Spark.delete("/db", this::clearRequest);
         Spark.post("/session", this::logRequest);
@@ -31,7 +32,6 @@ public class Server {
         Spark.get("/game", this::listGamesRequest);
         Spark.post("/game", this::createGameRequest);
         Spark.put("/game", this::joinGameRequest);
-        Spark.webSocket("/connect", WSServer.class);
 
         Spark.awaitInitialization();
         return Spark.port();

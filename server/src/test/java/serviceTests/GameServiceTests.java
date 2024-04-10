@@ -35,7 +35,7 @@ public class GameServiceTests {
     @Test
     public void listGamesLarge() throws DataAccessException, SQLException {
         GameData[] games = new GameData[1];
-        GameData model = new GameData(null, null, "One", 1, new ChessGame());
+        GameData model = new GameData(null, null, "One", 1, new ChessGame(), false);
         games[0] = model;
         ListGamesResponse resp = new ListGamesResponse(games,null);
         GameService.createGame("One");

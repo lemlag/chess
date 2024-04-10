@@ -68,7 +68,11 @@ public class GameService {
 
     public static void finishGame(String gameID) throws SQLException, DataAccessException {
         GameDAO gameInfo = MySQLGameDAO.getInstance();
-        GameData game = gameInfo.getGameData(gameID);
         gameInfo.updateGame(gameID, null, null, false, null, true);
+    }
+
+    public static void updateMove(String gameID, String username, ChessGame game) throws SQLException, DataAccessException {
+        GameDAO gameInfo = MySQLGameDAO.getInstance();
+        gameInfo.updateGame(gameID, null, username, true, game, false);
     }
 }

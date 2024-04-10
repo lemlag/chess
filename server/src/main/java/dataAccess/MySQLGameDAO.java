@@ -109,14 +109,14 @@ public class MySQLGameDAO implements GameDAO{
         if(finish){
             game = game.finish();
         }
-        if (clientColor.equals("WHITE")){
-            game =  game.gainUserWhite(username);
-        } else{
-            game = game.gainUserBlack(username);
-        }
+
 
         if(moveMade) {
             game = game.moveMade(board);
+        }else if (clientColor.equals("WHITE")){
+            game =  game.gainUserWhite(username);
+        } else{
+            game = game.gainUserBlack(username);
         }
 
         try(Connection connection = DatabaseManager.getConnection()) {
