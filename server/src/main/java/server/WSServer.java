@@ -56,16 +56,16 @@ public class WSServer {
                     }
                     case MAKE_MOVE -> {
                         MakeMoveCommand com = (MakeMoveCommand) command;
-                        make_move(authToken, com.getGameID().toString(), user, com.getMove());
+                        makeMove(authToken, com.getGameID().toString(), user, com.getMove());
                         response = null;
                     }
                     case JOIN_PLAYER -> {
                         JoinPlayerCommand com = (JoinPlayerCommand) command;
-                        response = join_player(com.getGameID().toString(), com.getAuthString(), session, user, com.getPlayerColor().toString());
+                        response = joinPlayer(com.getGameID().toString(), com.getAuthString(), session, user, com.getPlayerColor().toString());
                     }
                     case JOIN_OBSERVER -> {
                         JoinObserverCommand com = (JoinObserverCommand) command;
-                        response = join_observer(com.getGameID().toString(), com.getAuthString(), session, user);
+                        response = joinObserver(com.getGameID().toString(), com.getAuthString(), session, user);
                     }
                     default -> throw new DataAccessException("Invalid request");
                 }
@@ -110,7 +110,7 @@ public class WSServer {
         return gson.toJson(notification);
     }
 
-    private String join_player(String gameID, String authToken, Session session, String user, String color) throws IOException, SQLException, DataAccessException {
+    private String joinPlayer(String gameID, String authToken, Session session, String user, String color) throws IOException, SQLException, DataAccessException {
         GameData gameData = GameService.getGame(gameID);
         if(color.equals("WHITE") && (!gameData.whiteUsername().equals(user))){
             throw new DataAccessException("Incorrect username");
@@ -127,7 +127,7 @@ public class WSServer {
         return gson.toJson(loadGame);
     }
 
-    private String join_observer(String gameID, String authToken, Session session, String user) throws IOException, SQLException, DataAccessException {
+    private String joinObserver(String gameID, String authToken, Session session, String user) throws IOException, SQLException, DataAccessException {
         if(GameService.getGame(gameID) == null){
             throw new DataAccessException("Bad game ID");
         }
@@ -139,7 +139,7 @@ public class WSServer {
         return gson.toJson(loadGame);
     }
 
-    private void make_move(String authToken, String gameID, String username, ChessMove move) throws SQLException, DataAccessException, InvalidMoveException, IOException {
+    private void makeMove(String authToken, String gameID, String username, ChessMove move) throws SQLException, DataAccessException, InvalidMoveException, IOException {
         GameData gameStats = GameService.getGame(gameID);
         ChessGame game = gameStats.game();
         ChessGame.TeamColor teamColor;

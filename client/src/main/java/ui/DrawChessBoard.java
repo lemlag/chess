@@ -15,17 +15,17 @@ public class DrawChessBoard {
     private static final int EDGE_SIZE = 2;
     private static final int BOARD_INDEX = BOARD_SIZE_IN_SQUARES - 1;
 
-    private static squareColor currSquare;
+    private static SquareColor currSquare;
 
 
-    public enum squareColor {
+    public enum SquareColor {
         LIGHT,
         DARK
     }
 
     public static void drawBoard(ChessGame game, ChessGame.TeamColor player){
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        currSquare = squareColor.DARK;
+        currSquare = SquareColor.DARK;
         out.print(ERASE_SCREEN);
         drawHeader(player, out);
         drawSquares(game.getBoard(), player, out);
@@ -35,7 +35,7 @@ public class DrawChessBoard {
 
     public static void drawBoardHighlights(ChessGame game, Collection<ChessMove> chessMoves, ChessPosition startingPosition, ChessGame.TeamColor player){
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        currSquare = squareColor.DARK;
+        currSquare = SquareColor.DARK;
         out.print(ERASE_SCREEN);
         drawHeader(player, out);
         Collection<ChessPosition> chessPositions = new HashSet<>();
@@ -54,13 +54,7 @@ public class DrawChessBoard {
                 out.print(" " + row + " ");
                 setNextSquare(out);
                 for (int col = 1; col <= BOARD_SIZE_IN_SQUARES; col++) {
-                    if(chessPositions.contains(new ChessPosition(row, col))){
-                        setNextBlueSquare(out);
-                    } else if(startingPosition.equals(new ChessPosition(row, col))){
-                        setNextYellowSquare(out);
-                    }
-                    printNextPiece(out, board.getPiece(new ChessPosition(row, col)));
-                    setNextSquare(out);
+                    makeHighlightedSquares(chessPositions, row, col, out, board, startingPosition);
                 }
                 setHeaderColors(out);
                 out.print(" " + row + " ");
@@ -73,13 +67,7 @@ public class DrawChessBoard {
                 out.print(" " + row + " ");
                 setNextSquare(out);
                 for (int col = BOARD_SIZE_IN_SQUARES; col > 0; col--) {
-                    if(chessPositions.contains(new ChessPosition(row, col))){
-                        setNextBlueSquare(out);
-                    } else if(startingPosition.equals(new ChessPosition(row, col))){
-                        setNextYellowSquare(out);
-                    }
-                    printNextPiece(out, board.getPiece(new ChessPosition(row, col)));
-                    setNextSquare(out);
+                    makeHighlightedSquares(chessPositions, row, col, out, board, startingPosition);
                 }
                 setHeaderColors(out);
                 out.print(" " + row + " ");
@@ -89,15 +77,25 @@ public class DrawChessBoard {
         }
     }
 
+    private static void makeHighlightedSquares(Collection<ChessPosition> chessPositions, int row, int col, PrintStream out, ChessBoard board, ChessPosition startingPosition){
+        if(chessPositions.contains(new ChessPosition(row, col))){
+            setNextBlueSquare(out);
+        } else if(startingPosition.equals(new ChessPosition(row, col))){
+            setNextYellowSquare(out);
+        }
+        printNextPiece(out, board.getPiece(new ChessPosition(row, col)));
+        setNextSquare(out);
+    }
+
     private static void setNextYellowSquare(PrintStream out) {
         out.print(SET_BG_COLOR_YELLOW);
     }
 
     private static void setNextBlueSquare(PrintStream out) {
-        if(currSquare == squareColor.LIGHT) {
+        if(currSquare == SquareColor.LIGHT) {
             out.print(SET_BG_COLOR_BLUE);
         } else{
-            out.print(SET_BG_COLOR_DARK_GREY);
+            out.print(SET_BG_COLOR_PURPLE);
         }
     }
 
@@ -187,12 +185,12 @@ public class DrawChessBoard {
     }
 
     private static void setNextSquare(PrintStream out){
-        if(currSquare == squareColor.LIGHT) {
+        if(currSquare == SquareColor.LIGHT) {
             out.print(SET_BG_COLOR_DARK_GREEN);
-            currSquare = squareColor.DARK;
+            currSquare = SquareColor.DARK;
         } else{
             out.print(SET_BG_COLOR_GREEN);
-            currSquare = squareColor.LIGHT;
+            currSquare = SquareColor.LIGHT;
         }
     }
 

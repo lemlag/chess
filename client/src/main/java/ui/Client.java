@@ -101,30 +101,7 @@ public class Client implements ServerMessageObserver{
             }
             case "3" -> {
                 gameList = listGames(authToken).getGames();
-                out.print("Enter the game number of the game you would like to join: ");
-                String gameNum = scanner.nextLine();
-                if(Integer.parseInt(gameNum) < gameList.length) {
-                    game = gameList[Integer.parseInt(gameNum)];
-                    String gameID = String.valueOf(game.gameID());
-                    out.println("Enter WHITE to join as white player or BLACK to join as black player:");
-                    playerColor = scanner.nextLine();
-                    String message = joinGame(playerColor, gameID, authToken, this);
-                    try{
-                        ServerFacade.joinPlayer(authToken, Integer.valueOf(gameID), ChessGame.TeamColor.valueOf(playerColor));
-                    } catch (Exception e) {
-                        System.out.println(e.getMessage());
-                    }
-                    if (message.equals("Success")) {
-                        out.println("Joining Game...");
-                        gameJoined = true;
-                        out.println(ERASE_SCREEN);
-                        drawJoinClient();
-                    } else {
-                        out.println(message);
-                    }
-                } else{
-                    out.println("Error: Game number " + gameNum + " undefined");
-                }
+                clientJoinGame(gameList);
             }
             case "4" -> {
                 gameList = listGames(authToken).getGames();
@@ -162,6 +139,33 @@ public class Client implements ServerMessageObserver{
                 out.println("Help Menu:");
                 out.println("Type the number associated with the action you would like to take. Then press enter.");
             }
+        }
+    }
+
+    private void clientJoinGame(GameData[] gameList){
+        out.print("Enter the game number of the game you would like to join: ");
+        String gameNum = scanner.nextLine();
+        if(Integer.parseInt(gameNum) < gameList.length) {
+            game = gameList[Integer.parseInt(gameNum)];
+            String gameID = String.valueOf(game.gameID());
+            out.println("Enter WHITE to join as white player or BLACK to join as black player:");
+            playerColor = scanner.nextLine();
+            String message = joinGame(playerColor, gameID, authToken, this);
+            try{
+                ServerFacade.joinPlayer(authToken, Integer.valueOf(gameID), ChessGame.TeamColor.valueOf(playerColor));
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+            if (message.equals("Success")) {
+                out.println("Joining Game...");
+                gameJoined = true;
+                out.println(ERASE_SCREEN);
+                drawJoinClient();
+            } else {
+                out.println(message);
+            }
+        } else{
+            out.println("Error: Game number " + gameNum + " undefined");
         }
     }
 
