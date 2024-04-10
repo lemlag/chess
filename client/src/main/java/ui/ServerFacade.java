@@ -1,11 +1,15 @@
 package ui;
 
+import chess.ChessGame;
+import chess.ChessMove;
+import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import model.GameData;
 import requests.*;
 import responses.CreateGameResponse;
 import responses.ListGamesResponse;
 import responses.LoginResponse;
+import webSocketMessages.userCommands.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -108,8 +112,32 @@ public class ServerFacade {
         return response;
     }
 
-    public static GameData highlightSquares(String authtoken){
-        return null;
+    public static void makeMoves(String authToken, Integer gameID, ChessMove move) throws Exception {
+        System.out.println("wowow");
+        MakeMoveCommand mover = new MakeMoveCommand(authToken, gameID, move);
+        websocket.makeMove(mover);
+    }
+
+    public static void joinPlayer(String authToken, Integer gameID, ChessGame.TeamColor color) throws Exception {
+        System.out.println("Do stuff");
+        JoinPlayerCommand joiner = new JoinPlayerCommand(authToken, color, gameID);
+        websocket.joinPlayer(joiner);
+    }
+
+    public static void joinObserver(String authToken, Integer gameID) throws Exception {
+        System.out.println("More stuff");
+        JoinObserverCommand joiner = new JoinObserverCommand(authToken, gameID);
+        websocket.joinObserver(joiner);
+    }
+
+    public static void leave(String authToken, Integer gameID) throws Exception {
+        LeaveCommand leaver = new LeaveCommand(authToken, gameID);
+        websocket.leave(leaver);
+    }
+
+    public static void resign(String authToken, Integer gameID) throws Exception {
+        ResignCommand resigner = new ResignCommand(authToken, gameID);
+        websocket.resign(resigner);
     }
 
 

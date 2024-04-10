@@ -1,12 +1,11 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.HashSet;
 
 import static ui.EscapeSequences.*;
 
@@ -32,6 +31,74 @@ public class DrawChessBoard {
         drawSquares(game.getBoard(), player, out);
         drawHeader(player, out);
         out.println();
+    }
+
+    public static void drawBoardHighlights(ChessGame game, Collection<ChessMove> chessMoves, ChessPosition startingPosition, ChessGame.TeamColor player){
+        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        currSquare = squareColor.DARK;
+        out.print(ERASE_SCREEN);
+        drawHeader(player, out);
+        Collection<ChessPosition> chessPositions = new HashSet<>();
+        for (ChessMove move : chessMoves){
+            chessPositions.add(move.getEndPosition());
+        }
+        drawSquareHighlights(game.getBoard(), player, out, chessPositions, startingPosition);
+        drawHeader(player, out);
+        out.println();
+    }
+
+    private static void drawSquareHighlights(ChessBoard board, ChessGame.TeamColor player, PrintStream out, Collection<ChessPosition> chessPositions, ChessPosition startingPosition) {
+        if(player == ChessGame.TeamColor.WHITE) {
+            for (int row = BOARD_SIZE_IN_SQUARES; row > 0; row--) {
+                setHeaderColors(out);
+                out.print(" " + row + " ");
+                setNextSquare(out);
+                for (int col = 1; col <= BOARD_SIZE_IN_SQUARES; col++) {
+                    if(chessPositions.contains(new ChessPosition(row, col))){
+                        setNextBlueSquare(out);
+                    } else if(startingPosition.equals(new ChessPosition(row, col))){
+                        setNextYellowSquare(out);
+                    }
+                    printNextPiece(out, board.getPiece(new ChessPosition(row, col)));
+                    setNextSquare(out);
+                }
+                setHeaderColors(out);
+                out.print(" " + row + " ");
+                out.print(SET_BG_COLOR_BLACK);
+                out.println();
+            }
+        } else{
+            for (int row = 1; row <= BOARD_SIZE_IN_SQUARES; row++) {
+                setHeaderColors(out);
+                out.print(" " + row + " ");
+                setNextSquare(out);
+                for (int col = BOARD_SIZE_IN_SQUARES; col > 0; col--) {
+                    if(chessPositions.contains(new ChessPosition(row, col))){
+                        setNextBlueSquare(out);
+                    } else if(startingPosition.equals(new ChessPosition(row, col))){
+                        setNextYellowSquare(out);
+                    }
+                    printNextPiece(out, board.getPiece(new ChessPosition(row, col)));
+                    setNextSquare(out);
+                }
+                setHeaderColors(out);
+                out.print(" " + row + " ");
+                out.print(SET_BG_COLOR_BLACK);
+                out.println();
+            }
+        }
+    }
+
+    private static void setNextYellowSquare(PrintStream out) {
+        out.print(SET_BG_COLOR_YELLOW);
+    }
+
+    private static void setNextBlueSquare(PrintStream out) {
+        if(currSquare == squareColor.LIGHT) {
+            out.print(SET_BG_COLOR_BLUE);
+        } else{
+            out.print(SET_BG_COLOR_DARK_GREY);
+        }
     }
 
     private static void drawSquares(ChessBoard board, ChessGame.TeamColor player, PrintStream out) {
@@ -65,6 +132,7 @@ public class DrawChessBoard {
             }
         }
     }
+
 
     private static void printNextPiece(PrintStream out, ChessPiece piece) {
         if(piece == null){
